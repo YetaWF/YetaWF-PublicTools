@@ -33,7 +33,7 @@ namespace YetaWF.PublicTools.StatusCheck {
             Console.WriteLine("Initializing...");
 
             // Enable all required protocols
-            ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
             // StatusCheck console application settings
             string text = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SETTINGSFILE));
