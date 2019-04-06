@@ -1,0 +1,12 @@
+{
+  "SiteDomain":  "yourdomain.com",
+  "Interval": 60,
+  "URLs": [
+    "https://yourdomain.com",
+    "https://yourotherdomain.com"
+  ],
+  "Timeout": 30,
+  "SMSNotify": [
+    "+14075551212"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "LanguageSection": {
+    "Languages": [
+      {
+        "Id": "en-US",
+        "ShortName": "English",
+        "Description": "US English"
+      }
+    ]
+  }
+}
