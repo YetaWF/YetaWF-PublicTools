@@ -25,7 +25,7 @@ namespace YetaWF.PublicTools.StatusCheck {
         /// </summary>
         public List<string> SMSNotify { get; set; }
         /// <summary>
-        /// The timeout (in seconds) used when retrieving URLs. If there is no response after the specified number of minutes, the site is considered down.
+        /// The timeout (in seconds) used when retrieving URLs. If there is no response after the specified number of seconds, the site is considered down.
         /// </summary>
         public int Timeout { get; set; }
     }
