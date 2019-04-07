@@ -13,7 +13,7 @@ namespace YetaWF.PublicTools.StatusCheck {
         /// </summary>
         public string SiteDomain { get; set; }
         /// <summary>
-        /// The interval (in minutes) used to check all specified URLs.
+        /// The interval (in seconds) used to check all specified URLs.
         /// </summary>
         public int Interval { get; set; }
         /// <summary>
@@ -25,7 +25,7 @@ namespace YetaWF.PublicTools.StatusCheck {
         /// </summary>
         public List<string> SMSNotify { get; set; }
         /// <summary>
-        /// The timeout (in minutes) used when retrieving URLs. If there is no response after the specified number of minutes, the site is considered down.
+        /// The timeout (in seconds) used when retrieving URLs. If there is no response after the specified number of minutes, the site is considered down.
         /// </summary>
         public int Timeout { get; set; }
     }
