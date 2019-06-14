@@ -1,3 +1,6 @@
 *.csproj
 *.config
 StatusCheck/
+
+bin/
+obj/
