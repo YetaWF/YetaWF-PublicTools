@@ -1,0 +1,23 @@
+﻿# SQL Databases
+# Production system DBs (adjust as needed)
+ProdDB yourDEVdatabasename,yourPRODdatabasename,sqlservername,username,password
+# additional ProdDB statements if you have more DBs
+
+# Relative location of the website we want to deploy
+SiteLocation C:\targetpath.....\yoursite
+
+# The location of the ZIP file
+ZipFile C:\targetpath.....\Website.zip
+
+# Page to display on production system while we're installing
+MaintenancePage Offline For Maintenance.html
+# Set the update indicator file so the next restart will update/create all necessary models
+#UpdateIndicator
+
+# Additional folders to copy (must match folders in FROM DEV)
+#CopyFolder ..\targetpath
+
+### FIRST TIME INSTALL! (Needed for ASP.NET CORE with IIS Hosting)
+### In order to run an ASP.NET Core application on IIS you need to install the .NET Core Windows Server Hosting bundle on the server.
+### For more information see https://docs.microsoft.com/en-us/aspnet/core/publishing/iis#install-the-net-core-windows-server-hosting-bundle
+

@@ -1,0 +1,43 @@
+﻿# SQL Databases
+# Development system DBs (adjust as needed)
+DevDB yourDEVdatabasename,yourPRODdatabasename,sqlservername,username,password
+# additional DevDB statements if you have more DBs
+
+# ASP.NET Core sites are first published using Visual Studio (manually), then deployed from the target location where the site was published.
+# Specify an absolute path - The PublishOutput statement is required for ASP.NET Core sites and not allowed for ASP.NET 4 sites.
+PublishOutput C:\Temp\PublishOutput
+
+# Relative location of the website we want to deploy
+SiteLocation ..\..\Website
+
+# The location where the zip file is created
+ZipFile .\TEMP\Website.zip
+
+# The config file portion that is used for app.config, appsettings.json, hosting.json, web.config.
+# Optional. When specified, the config file name adds the specified ConfigParm string before the extension. The ConfigParm string can contain periods.
+# In this example, the files app.Prod.config, appsettings.Prod.json, hosting.Prod.json and web.Prod.config are copied for deployment
+# named app.config, appsettings.json, hosting.json, web.config on the deployed site.
+# If one of the files app.Prod.config, appsettings.Prod.json, hosting.Prod.json or web.Prod.config does not exist, the matching
+# file (without the ConfigParm string) is copied instead.
+ConfigParm Prod
+
+# The name of the web.config file to use on the site (located at SiteLocation)
+# The ConfigFile statement should no longer be used - Use ConfigParm instead
+#ConfigFile Web.Prod.config
+
+# Additional folders to copy (part of Zip file - must match folders in PROD) - PRIVATE HOSTING ONLY
+#CopyFolder ..\localpath
+
+# Define what to upload
+# .\TEMP\Website.zip is the file to be uploaded (local path), /Website.zip is the full path of the zip file on the server (adjust as needed)
+Upload ftp://serveraddress, ftpuser, ftppassword, .\TEMP\Website.zip, /Website.zip
+# additional Upload statements if needed
+
+# The following Upload statements are for PRIVATE HOSTING ONLY
+Upload ftp://serveraddress, ftpuser, ftppassword, .\CopySite PROD.txt, /CopySite PROD.txt
+Upload ftp://serveraddress, ftpuser, ftppassword, .\CopySite PROD.bat, /CopySite PROD.bat
+
+# Define folders to upload (not part of Zip file) - PRIVATE HOSTING ONLY
+# The CopySite utility is needed to unpack the zip file so we have to copy it outside the zip file
+UploadFolder ftp://serveraddress, ftpuser, ftppassword, .\Bin, /Utilities/CopySite/Bin
+

@@ -1,0 +1,1 @@
+".\bin\Softelvdm.CopySite.exe" Backup ".\CopySite FROM DEV.txt"

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CopySite": {
+      "commandName": "Project",
+      "commandLineArgs": " Backup \"\\Development\\YetaWF\\CopySite FROM DEV BLUEGREEN.txt\" Blue",
+      "workingDirectory": "\\Development\\YetaWF"
+    }
+  }
+}
