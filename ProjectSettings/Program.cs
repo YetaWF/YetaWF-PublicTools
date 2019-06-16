@@ -152,11 +152,6 @@ namespace Softelvdm.Tools.ProjectSettings {
             string targetCompanyName = TargetCompany ? companyName : "";
             string projName = Path.GetFileName(project);
 
-            //$$$ TEMPORARY
-            if (companyName == "YetaWF" && projName == "Messenger")
-                return; // Messenger module is not ready for distribution
-            //$$$ TEMPORARY
-
             string websiteFolder = Path.Combine(solFolder, "Website");
             // Make a symlink from the Website/Addons/company/project to folder/company/project/Addons
             string srcFolder = Path.Combine(websiteFolder, IsMVC6 ? "wwwroot" : "", "Addons");
@@ -178,7 +173,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 Junction.Create(srcFolder, targetFolder, true);
             } else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 // There is no API in .NET Core to do this. Tsk, tsk.
-                RunCommand("ln" , $"-s \"{targetFolder}\" \"{srcFolder}\"");
+                RunCommand("ln" , $"-f -s \"{targetFolder}\" \"{srcFolder}\"");
                 if (!Directory.Exists(srcFolder))
                     throw new ApplicationException($"Unable to create symlink from {srcFolder} to {targetFolder}");
             } else {

@@ -621,7 +621,7 @@ namespace CopySite {
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
                 AddAllFilesToTarget("Localization");
-                AddAllFilesToTarget("LocalizationCustom");
+                AddAllFilesToTarget("LocalizationCustom", Optional:true);
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { "Backup *.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
@@ -635,7 +635,7 @@ namespace CopySite {
                     AddConfigFileToTarget("Web.{0}config", "Web.config");
 
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Addons"));
-                AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"));
+                AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
                 AddAllFilesToTarget(Path.Combine("wwwroot", "lib"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"));
@@ -646,7 +646,7 @@ namespace CopySite {
             } else {
 
                 AddAllFilesToTarget("Addons");
-                AddAllFilesToTarget("AddonsCustom");
+                AddAllFilesToTarget("AddonsCustom", Optional: true);
                 AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.pdb", @".*\.xml" });
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFileToTarget(Path.Combine("node_modules", "Web.config"));
@@ -657,7 +657,7 @@ namespace CopySite {
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
                 AddAllFilesToTarget(MAINTENANCEFOLDER);
                 AddAllFilesToTarget("Localization");
-                AddAllFilesToTarget("LocalizationCustom");
+                AddAllFilesToTarget("LocalizationCustom", Optional: true);
                 AddAllFilesToTarget("SiteFiles");
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { @"TempFiles" });
                 AddAllFilesToTarget("SiteTemplates");
@@ -698,12 +698,12 @@ namespace CopySite {
                 }
             }
         }
-        private void AddAllFilesToTarget(string folder, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null) {
+        private void AddAllFilesToTarget(string folder, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null, bool Optional = false) {
             string absPath = Path.Combine(SiteLocation, folder);
             string relPath = folder;
-            AddFilesToTargetAndRecurse(absPath, relPath, ExcludeFiles, ExcludeFolders);
+            AddFilesToTargetAndRecurse(absPath, relPath, ExcludeFiles, ExcludeFolders, Optional);
         }
-        private void AddFilesToTargetAndRecurse(string absPath, string relPath, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null) {
+        private void AddFilesToTargetAndRecurse(string absPath, string relPath, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null, bool Optional = false) {
             if (ExcludeFiles == null)
                 ExcludeFiles = new List<string>();
             ExcludeFiles.Add(@".*\.lastcodeanalysissucceeded");
@@ -712,6 +712,12 @@ namespace CopySite {
             ExcludeFolders.Add(@"\.git");
 
             if (File.Exists(Path.Combine(absPath, DONTDEPLOY))) return;
+
+            if (!Directory.Exists(absPath)) {
+                if (Optional)
+                    return;
+                    throw new Error($"Folder {absPath} does not exist");
+            }
 
             string[] files = Directory.GetFiles(absPath);
             foreach (string file in files) {
