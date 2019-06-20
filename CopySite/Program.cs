@@ -624,8 +624,8 @@ namespace CopySite {
                 AddAllFilesToTarget("LocalizationCustom", Optional:true);
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { "Backup *.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
-                AddAllFilesToTarget("SiteTemplates");
+                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { "Backup *.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
+                AddAllFilesToTarget("SiteTemplates", Optional: true);
                 //AddAllFilesToPublishFolder("VaultPrivate");
                 AddConfigFileToTarget("app.{0}config", "app.config");
                 AddConfigFileToTarget("hosting.{0}json", "hosting.json");
@@ -636,9 +636,9 @@ namespace CopySite {
 
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
-                AddAllFilesToTarget(Path.Combine("wwwroot", "lib"));
+                AddAllFilesToTarget(Path.Combine("wwwroot", "lib"), Optional: true);
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
-                AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"));
+                AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
                 //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));// never
                 AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"));
                 AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
