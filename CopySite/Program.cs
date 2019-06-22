@@ -242,6 +242,8 @@ namespace CopySite {
                     HandleUploadFolder(lineCount, line);
                 else if (item == "Run")
                     HandleRun(lineCount, line);
+                else if (item == "Exec")
+                    HandleExec(lineCount, line);
                 else if (item == "RunFirst")
                     HandleRun(lineCount, line, Startup: true);
                 else if (item == "RunFirstIgnore")
@@ -468,6 +470,14 @@ namespace CopySite {
                 Startup = Startup,
             };
             RunCmds.Add(run);
+        }
+        private void HandleExec(int lineNum, string line, bool IgnoreError = false, bool Startup = false) {
+            string command = line.Trim();
+            RunCmd run = new RunCmd {
+                Command = command,
+                IgnoreError = false,
+            };
+            RunCommand(run);
         }
         private void HandleTargetFolder(int lineNum, string line) {
             if (Action != CopyAction.Backup)
