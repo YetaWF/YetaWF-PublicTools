@@ -19,7 +19,10 @@ namespace CopySite {
     /// This is a hacky little program that is typically used during deployment of YetaWF to
     /// copy files from symlinks, which dotnet publish doesn't address.
     /// </summary>
-    /// <remarks>The code could be prettier. This is a dev tool that ended up being needed for docker build on linux. Oh well.</remarks>
+    /// <remarks>The code could be prettier. This is a dev tool that ended up being needed for docker build on linux. Oh well.
+    ///
+    /// One redeeming feature it has is that it prunes node_modules and only deploys what is actually referenced by the website.
+    /// </remarks>
     class Program {
 
         public const string MarkerMVC6 = "wwwroot";

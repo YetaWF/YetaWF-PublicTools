@@ -127,14 +127,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sql Auth %28MAIL SOFTELSRV1%29.sql" />
-    <Content Include="Sql Auth %28MVCFORUM SOFTELSRV1%29.sql" />
-    <Content Include="Sql Repl %28MAIL SOFTELSRV1%29.sql" />
-    <Content Include="Sql Repl %28MVCFORUM SOFTELSRV1%29.sql" />
     <Content Include="CopySite FROM DEV.Generic.txt" />
     <Content Include="CopySite TO PROD.Generic.txt" />
-    <Content Include="Sql DROP %28MAIL SOFTELSRV1%29.sql" />
-    <Content Include="Sql DROP %28MVCFORUM SOFTELSRV1%29.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
