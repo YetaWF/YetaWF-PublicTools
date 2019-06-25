@@ -630,14 +630,14 @@ namespace CopySite {
                 AddPublishOutputFiles("*.deps.json");
                 AddPublishOutputFiles("*.exe.config");
 
-                AddAllFilesToTarget(DATAFOLDER, ExcludeFiles: new List<string> { "AppSettings.*", "NLog.*", "UpgradeLogFile.txt", "*.mdf", "*.ldf" });
+                AddAllFilesToTarget(DATAFOLDER, ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"UpgradeLogFile\.txt", @".*\.mdf", @".*\.ldf" });
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
                 AddAllFilesToTarget("Localization");
                 AddAllFilesToTarget("LocalizationCustom", Optional:true);
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { "Backup *.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
+                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
                 AddAllFilesToTarget("SiteTemplates", Optional: true);
                 //AddAllFilesToPublishFolder("VaultPrivate");
                 AddConfigFileToTarget("app.{0}config", "app.config");
@@ -729,7 +729,7 @@ namespace CopySite {
             if (!Directory.Exists(absPath)) {
                 if (Optional)
                     return;
-                    throw new Error($"Folder {absPath} does not exist");
+                throw new Error($"Folder {absPath} does not exist");
             }
 
             string[] files = Directory.GetFiles(absPath);
