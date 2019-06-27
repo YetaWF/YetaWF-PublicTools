@@ -933,8 +933,9 @@ namespace CopySite {
                             if (!path.EndsWith(".js") && !path.EndsWith(".css"))
                                 throw new Error($"File {file} contains reference to {path} which isn't .js or .css");
                             path = Path.GetDirectoryName(path);
+                            path = PhysicalToFile(path);
                             path = path.Replace("/{0}", ""); // for some composite paths like jqueryui themes
-                            string realPath = SiteLocation + path;
+                            string realPath = SiteLocation + FileToPhysical(path);
                             if (!Directory.Exists(realPath))
                                 throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
                             path = path.Substring(1);// remove leading '/'
