@@ -109,7 +109,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="CopySite FROM DEV.Generic.bat" />
     <None Include="CopySite TO PROD.Generic.bat" />
     <None Include="packages.config" />
@@ -131,19 +130,6 @@
     <Content Include="CopySite TO PROD.Generic.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
- echo copy "Copying to distribution"
- Copy "C:\Development\YetaWF\Tools\CopySite\CopySite FROM DEV.Generic.bat" "C:\Development\YetaWFDist4.com\Utilities\CopySite\CopySite FROM DEV.Generic.bat"
- Copy "C:\Development\YetaWF\Tools\CopySite\CopySite FROM DEV.Generic.txt" "C:\Development\YetaWFDist4.com\Utilities\CopySite\CopySite FROM DEV.Generic.txt"
- Copy "C:\Development\YetaWF\Tools\CopySite\CopySite TO PROD.Generic.bat" "C:\Development\YetaWFDist4.com\Utilities\CopySite\CopySite TO PROD.Generic.bat"
- Copy "C:\Development\YetaWF\Tools\CopySite\CopySite TO PROD.Generic.txt" "C:\Development\YetaWFDist4.com\Utilities\CopySite\CopySite TO PROD.Generic.txt"
-
- Copy "C:\Development\YetaWF\Utilities\CopySite\bin" "C:\Development\YetaWFDist4.com\Utilities\CopySite\Bin"
-
-
-</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
