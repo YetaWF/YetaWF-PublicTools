@@ -992,6 +992,7 @@ namespace CopySite {
 
             if (BlueGreenDeploy != BlueGreenDeployEnum.None && AllowSubstitutionFiles.Contains(PhysicalToFile(newName).ToLower())) {
                 string contents = File.ReadAllText(absFile);
+                contents = contents.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
                 contents = contents.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
                 contents = contents.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
                 contents = contents.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
