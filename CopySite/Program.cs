@@ -634,7 +634,7 @@ namespace CopySite {
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
                 AddAllFilesToTarget("Localization");
-                AddAllFilesToTarget("LocalizationCustom", Optional:true);
+                AddAllFilesToTarget("LocalizationCustom", Optional: true);
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
@@ -755,7 +755,7 @@ namespace CopySite {
                     if (file.EndsWith(".css") && ((!file.Contains(@"/node_modules/") && file.Contains(@"/Addons/")) || (!file.Contains(@"\\node_modules\\") && file.Contains(@"\\Addons\\")))) {
                         string dir = file;
                         int maxLevels = 3;
-                        for (; ; ) {
+                        for (;;) {
                             dir = Path.GetDirectoryName(dir);
                             if (File.Exists(Path.Combine(dir, "filelistCSS.txt")))
                                 break;
@@ -767,7 +767,7 @@ namespace CopySite {
                     if (file.EndsWith(".js") && ((!file.Contains(@"/node_modules/") && file.Contains(@"/Addons/")) || (!file.Contains(@"\node_modules\") && file.Contains(@"\Addons\")))) {
                         string dir = file;
                         int maxLevels = 3;
-                        for (; ; ) {
+                        for (;;) {
                             dir = Path.GetDirectoryName(dir);
                             if (File.Exists(Path.Combine(dir, "filelistJS.txt")))
                                 break;
@@ -824,7 +824,7 @@ namespace CopySite {
             }
         }
         private bool LikeString(string fileName, string pattern) {
-            Regex re = new Regex($"^{pattern}$");
+            Regex re = new Regex($"^{pattern}$", RegexOptions.IgnoreCase);
             return re.IsMatch(fileName);
         }
 
@@ -926,7 +926,7 @@ namespace CopySite {
                         if (!Directory.Exists(realPath))
                             throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
                         path = path.Substring(1);// remove leading '\'
-                        paths.Add(path);
+                        paths.Add(FileToPhysical(path));
                         continue;
                     } else {
                         if (path.StartsWith("/node_modules/") || path.StartsWith("bower_components")) {
@@ -939,7 +939,7 @@ namespace CopySite {
                             if (!Directory.Exists(realPath))
                                 throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
                             path = path.Substring(1);// remove leading '/'
-                            paths.Add(path);
+                            paths.Add(FileToPhysical(path));
                             continue;
                         }
                         if (path.StartsWith("Folder ")) {
@@ -949,7 +949,7 @@ namespace CopySite {
                             if (!Directory.Exists(realPath))
                                 throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
                             path = path.Substring(1);// remove leading '\'
-                            paths.Add(path);
+                            paths.Add(FileToPhysical(path));
                             continue;
                         }
                         if (path.Contains("node_modules") || path.Contains("bower_components"))
