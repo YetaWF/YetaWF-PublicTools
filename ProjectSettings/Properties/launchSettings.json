@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ProjectSettings": {
+      "commandName": "Project",
+      "commandLineArgs": "SymLinks",
+      "workingDirectory": "C:\\Development\\YetaWF2\\Website"
+    }
+  }
+}
