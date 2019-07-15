@@ -164,8 +164,10 @@ namespace Softelvdm.Tools.ProjectSettings {
         }
 
         private static void MakeSymLink(string srcFolder, string targetFolder) {
-            if (Directory.Exists(srcFolder))
+            if (Directory.Exists(srcFolder)) {
+                Console.WriteLine($"Removing folder {srcFolder}");
                 Directory.Delete(srcFolder);
+            }
             if (!Directory.Exists(targetFolder))
                 return;
             //Console.WriteLine(string.Format("Linking {0} to {1}", srcFolder, targetFolder));
