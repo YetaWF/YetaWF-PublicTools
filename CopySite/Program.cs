@@ -652,7 +652,7 @@ namespace CopySite {
                 AddAllFilesToTarget(Path.Combine("wwwroot", "lib"), Optional: true);
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
-                //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));// never
+                AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));
                 AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"));
                 AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
 
@@ -682,7 +682,7 @@ namespace CopySite {
                     AddFileToTarget(ConfigFile, "Web.config");
                 else
                     AddConfigFileToTarget("Web.{0}config", "Web.config");
-                //AddAllFilesToTarget("Vault"); // never
+                AddAllFilesToTarget("Vault");
             }
 
             if (TargetZip != null) {
@@ -748,7 +748,7 @@ namespace CopySite {
                     // Check for minimal length (most files should be > 0 (or > 3 Unicode)
                     long length = new System.IO.FileInfo(file).Length;
                     if (length <= 3) {
-                        if (!file.EndsWith(".d.ts"))
+                        if ((file.EndsWith(".ts") && !file.EndsWith(".d.ts")) || file.EndsWith(".css") || file.EndsWith(".js"))
                             throw new Error($"File {file} is empty");
                     }
                     // Check for stray .js and .css files without filelistJS/CSS.txt in Addons folder
@@ -1244,6 +1244,7 @@ namespace CopySite {
                 AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
+                AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
                 AddFileToSite(Path.Combine("wwwroot", "logo.jpg"));
                 AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
@@ -1255,7 +1256,6 @@ namespace CopySite {
                 AddAllFilesToSite("node_modules");
                 AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
                 AddAllFilesToSite("SiteTemplates");
-                //AddAllFilesToSite("Vault"); // is never copied
 
                 AddFilesToSite(@"*.dll", ExcludeFolders: new List<string> { @"wwwroot" });
                 AddFilesToSite(@"*.exe", ExcludeFolders: new List<string> { @"wwwroot" });
@@ -1279,7 +1279,7 @@ namespace CopySite {
                 AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
                 AddAllFilesToSite("SiteFiles");
                 AddAllFilesToSite("SiteTemplates");
-                //AddAllFilesToSite("Vault"); // is never copied
+                AddAllFilesToSite("Vault");
                 AddFileToSite("logo.jpg");
                 AddFileToSite("Global.asax");
                 AddFileToSite("robots.txt");
