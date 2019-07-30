@@ -749,7 +749,7 @@ namespace CopySite {
                     // Check for minimal length (most files should be > 0 (or > 3 Unicode)
                     long length = new System.IO.FileInfo(file).Length;
                     if (length <= 3) {
-                        if (!file.EndsWith(".d.ts"))
+                        if ((file.EndsWith(".ts") && !file.EndsWith(".d.ts")) || file.EndsWith(".css") || file.EndsWith(".js"))
                             throw new Error($"File {file} is empty");
                     }
                     // Check for stray .js and .css files without filelistJS/CSS.txt in Addons folder
@@ -1246,6 +1246,7 @@ namespace CopySite {
                 AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
+                //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
                 AddFileToSite(Path.Combine("wwwroot", "logo.jpg"));
                 AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
