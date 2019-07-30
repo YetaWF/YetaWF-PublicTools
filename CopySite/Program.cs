@@ -1,4 +1,4 @@
-﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
 using Ionic.Zip;
 using Microsoft.SqlServer.Management.Common;
@@ -307,12 +307,13 @@ namespace CopySite {
             foreach (string l in lines) {
                 string newLine = l;
                 if (BlueGreenDeploy != BlueGreenDeployEnum.None) {
+                    newLine = newLine.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
                     newLine = newLine.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
                     newLine = newLine.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
                     newLine = newLine.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
                     newLine = newLine.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Green" : "-Blue");
                 } else {
-                    if (l.Contains("{BLUEGREEN}") || l.Contains("{-BLUEGREEN}") || l.Contains("{BLUEGREEN-OTHER}") || l.Contains("{-BLUEGREEN-OTHER}"))
+                    if (l.Contains("{bluegreen}") || l.Contains("{BLUEGREEN}") || l.Contains("{-BLUEGREEN}") || l.Contains("{BLUEGREEN-OTHER}") || l.Contains("{-BLUEGREEN-OTHER}"))
                         throw new Error("BLUEGREEN variable found but this is not a blue-green deploy");
                 }
                 newLines.Add(newLine);
@@ -991,6 +992,7 @@ namespace CopySite {
 
             if (BlueGreenDeploy != BlueGreenDeployEnum.None && AllowSubstitutionFiles.Contains(PhysicalToFile(newName).ToLower())) {
                 string contents = File.ReadAllText(absFile);
+                contents = contents.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
                 contents = contents.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
                 contents = contents.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
                 contents = contents.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
