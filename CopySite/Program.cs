@@ -633,7 +633,7 @@ namespace CopySite {
 
                 AddAllFilesToTarget(DATAFOLDER, ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"UpgradeLogFile\.txt", @".*\.mdf", @".*\.ldf" });
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
-                AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
+                AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"), Optional: true);
                 AddAllFilesToTarget("Localization");
                 AddAllFilesToTarget("LocalizationCustom", Optional: true);
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
@@ -668,7 +668,7 @@ namespace CopySite {
                 AddFileToTarget(Path.Combine("bower_components", "Web.config"));
                 AddAllFilesToTarget(DATAFOLDER, ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"UpgradeLogFile\.txt", @".*\.mdf", @".*\.ldf" });
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
-                AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"));
+                AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"), Optional: true);
                 AddAllFilesToTarget(MAINTENANCEFOLDER);
                 AddAllFilesToTarget("Localization");
                 AddAllFilesToTarget("LocalizationCustom", Optional: true);
@@ -1013,7 +1013,7 @@ namespace CopySite {
                 }
             }
         }
-        private void AddConfigFileToTarget(string relFile, string newName) {
+        private void AddConfigFileToTarget(string relFile, string newName, bool Optional = false) {
             string f, fileName;
             if (!string.IsNullOrWhiteSpace(ConfigParm)) {
                 fileName = string.Format(relFile, ConfigParm);
@@ -1029,7 +1029,8 @@ namespace CopySite {
                 AddFileToTarget(fileName, newName);
                 return;
             }
-            throw new Error("Config file {0} not found", relFile);
+            if (!Optional)
+                throw new Error("Config file {0} not found", relFile);
         }
         private void UploadFile(Upload upload) {
             Console.WriteLine("Uploading {0} ...", upload.SourceFile);
