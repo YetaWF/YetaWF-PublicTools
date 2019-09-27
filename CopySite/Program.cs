@@ -1,4 +1,4 @@
-/* Copyright Â© 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
 using Ionic.Zip;
 using Microsoft.SqlServer.Management.Common;

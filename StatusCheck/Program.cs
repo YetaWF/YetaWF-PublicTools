@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using YetaWF.Core.Support;
 
 namespace YetaWF.PublicTools.StatusCheck {
@@ -31,9 +30,6 @@ namespace YetaWF.PublicTools.StatusCheck {
 
             Console.Title = "Softel vdm, Inc. - StatusCheck";
             Console.WriteLine("Initializing...");
-
-            // Enable all required protocols
-            ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
             // StatusCheck console application settings
             string text = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SETTINGSFILE));
