@@ -66,6 +66,8 @@ namespace CopySite {
 
         private string BaseDirectory;
         public string MaintenancePage { get; private set; }
+        public bool NoLocalization { get; set; }
+        public bool NoSiteTemplates { get; set; }
         public bool UpdateIndicator { get; set; }
         public List<DB> BackupDBs { get; private set; }
         public List<DB> RestoreDBs { get; private set; }
@@ -97,6 +99,7 @@ namespace CopySite {
         public const string ZIPFOLDER = UNZIPFOLDER;
         public const string DBFOLDER = "DBs";
         public const string DATAFOLDER = "Data";
+        public const string PACKAGEMAP = "PackageMap.txt";
         public const string DBDATAFOLDER = "Data";
         public const string MAINTENANCEFOLDER = "Maintenance";
         public const string UPDATEINDICATORFILE = "UpdateIndicator.txt";
@@ -232,6 +235,10 @@ namespace CopySite {
                     HandleConfigParm(lineCount, line);
                 else if (item == "MaintenancePage")
                     HandleMaintenancePage(lineCount, line);
+                else if (item == "NoLocalization")
+                    HandleNoLocalization(lineCount, line);
+                else if (item == "NoSiteTemplates")
+                    HandleNoSiteTemplates(lineCount, line);
                 else if (item == "UpdateIndicator")
                     HandleUpdateIndicator(lineCount, line);
                 else if (item == "CopyFolder")
@@ -382,6 +389,20 @@ namespace CopySite {
             if (Action == CopyAction.Backup && !File.Exists(Path.Combine(SiteLocation, MAINTENANCEFOLDER, line)))
                 throw new Error("Maintenance statement on line {0} references a nonexistent file {1}", lineNum, line);
             MaintenancePage = line;
+        }
+        private void HandleNoLocalization(int lineNum, string line) {
+            if (Action == CopyAction.Restore)
+                throw new Error("NoLocalization statement indicates development system, but your command line specified Restore (implying production system) - (line {0}): {1}", lineNum, line);
+            if (NoLocalization)
+                throw new Error("More than one NoLocalization statement - line {0}", lineNum);
+            NoLocalization = true;
+        }
+        private void HandleNoSiteTemplates(int lineNum, string line) {
+            if (Action == CopyAction.Restore)
+                throw new Error("NoSiteTemplates statement indicates development system, but your command line specified Restore (implying production system) - (line {0}): {1}", lineNum, line);
+            if (NoSiteTemplates)
+                throw new Error("More than one NoSiteTemplates statement - line {0}", lineNum);
+            NoSiteTemplates = true;
         }
         private void HandleUpdateIndicator(int lineNum, string line) {
             if (Action == CopyAction.Backup)
@@ -631,15 +652,20 @@ namespace CopySite {
                 AddPublishOutputFiles("*.deps.json");
                 AddPublishOutputFiles("*.exe.config");
 
-                AddAllFilesToTarget(DATAFOLDER, ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"UpgradeLogFile\.txt", @".*\.mdf", @".*\.ldf" });
+                AddAllFilesToTarget(DATAFOLDER,
+                    ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"InitialInstall\.txt", @"UpgradeLogFile\.txt", @"StartupLogFile\.txt", @".*\.mdf", @".*\.ldf" },
+                    ExcludeFolders: new List<string>() { "Sites" });
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"), Optional: true);
-                AddAllFilesToTarget("Localization");
-                AddAllFilesToTarget("LocalizationCustom", Optional: true);
+                if (!NoLocalization) {
+                    AddAllFilesToTarget("Localization");
+                    AddAllFilesToTarget("LocalizationCustom", Optional: true);
+                }
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
-                AddAllFilesToTarget("SiteTemplates", Optional: true);
+                if (!NoSiteTemplates)
+                    AddAllFilesToTarget("SiteTemplates", Optional: true);
                 //AddAllFilesToPublishFolder("VaultPrivate");
                 AddConfigFileToTarget("app.{0}config", "app.config");
                 AddConfigFileToTarget("hosting.{0}json", "hosting.json");
@@ -648,18 +674,17 @@ namespace CopySite {
                 else
                     AddConfigFileToTarget("Web.{0}config", "Web.config");
 
-                AddAllFilesToTarget(Path.Combine("wwwroot", "Addons"));
+                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
-                AddAllFilesToTarget(Path.Combine("wwwroot", "lib"), Optional: true);
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
                 //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));
-                AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"));
+                AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
                 AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
 
             } else {
 
-                AddAllFilesToTarget("Addons");
+                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToTarget("AddonsCustom", Optional: true);
                 AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.pdb", @".*\.xml" });
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
@@ -670,13 +695,16 @@ namespace CopySite {
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "AppSettings.{0}json"), Path.Combine(DATAFOLDER, "AppSettings.json"));
                 AddConfigFileToTarget(Path.Combine(DATAFOLDER, "NLog.{0}config"), Path.Combine(DATAFOLDER, "NLog.config"), Optional: true);
                 AddAllFilesToTarget(MAINTENANCEFOLDER);
-                AddAllFilesToTarget("Localization");
-                AddAllFilesToTarget("LocalizationCustom", Optional: true);
-                AddAllFilesToTarget("SiteFiles");
+                if (!NoLocalization) {
+                    AddAllFilesToTarget("Localization");
+                    AddAllFilesToTarget("LocalizationCustom", Optional: true);
+                }
+                AddAllFilesToTarget("SiteFiles", Optional: true);
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { @"TempFiles" });
-                AddAllFilesToTarget("SiteTemplates");
+                if (!NoSiteTemplates)
+                    AddAllFilesToTarget("SiteTemplates", Optional: true);
                 AddFileToTarget("Global.asax");
-                AddFileToTarget("logo.jpg");
+                AddFileToTarget("logo.jpg", Optional: true);
                 AddFileToTarget("robots.txt");
 
                 if (!string.IsNullOrWhiteSpace(ConfigFile))
@@ -692,6 +720,7 @@ namespace CopySite {
                 Console.WriteLine("Zip file completed");
             }
         }
+
         private void AddPublishOutput() {
             AddFilesToTargetAndRecurse(PublishOutput, "", ExcludeFiles: new List<string> { @".*\.json", @".*\.config" }, ExcludeFolders: new List<string> { @"wwwroot" });
         }
@@ -711,6 +740,22 @@ namespace CopySite {
                     File.Copy(file, Path.Combine(TargetFolder, relFile));
                 }
             }
+        }
+
+        private void AddAddonsFolders(string addonsFolder) {
+            // Check all addons folders against PackageMap.txt and only copy folders that are referenced
+            string packageMap = File.ReadAllText(Path.Combine(SiteLocation, DATAFOLDER, PACKAGEMAP));
+            List<string> domains = (from d in Directory.GetDirectories(Path.Combine(SiteLocation, addonsFolder)) select Path.GetFileName(d)).ToList();
+            foreach (string domain in domains) {
+                string domainFolder = Path.Combine(SiteLocation, addonsFolder, domain);
+                List<string> products = (from d in Directory.GetDirectories(domainFolder) select Path.GetFileName(d)).ToList();
+                foreach (string product in products) {
+                    string productFolder = Path.Combine(SiteLocation, addonsFolder, domain, product);
+                    if (!packageMap.Contains($"{domain}.{product} ")) // simple string check (note trailing space)
+                        Directory.Delete(productFolder, false);// remove symlink
+                }
+            }
+            AddAllFilesToTarget(addonsFolder);
         }
         private void AddAllFilesToTarget(string folder, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null, bool Optional = false) {
             string absPath = Path.Combine(SiteLocation, folder);
@@ -985,31 +1030,33 @@ namespace CopySite {
             "web.prod.config",
         };
 
-        private void AddFileToTarget(string relFile, string newName = null) {
+        private void AddFileToTarget(string relFile, string newName = null, bool Optional = false) {
             if (newName == null) newName = relFile;
             string absFile = Path.Combine(SiteLocation, relFile);
-            Console.WriteLine("Copying {0} from {1}", newName, absFile);
+            if (!Optional || File.Exists(absFile)) {
+                Console.WriteLine("Copying {0} from {1}", newName, absFile);
 
-            if (BlueGreenDeploy != BlueGreenDeployEnum.None && AllowSubstitutionFiles.Contains(PhysicalToFile(newName).ToLower())) {
-                string contents = File.ReadAllText(absFile);
-                contents = contents.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
-                contents = contents.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
-                contents = contents.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
-                contents = contents.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
-                contents = contents.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Green" : "-Blue");
-                if (TargetZip != null) {
-                    ZipEntry ze = TargetZip.AddEntry(newName, contents);
-                }
-                if (!string.IsNullOrWhiteSpace(TargetFolder)) {
-                    File.WriteAllText(Path.Combine(TargetFolder, newName), contents);
-                }
-            } else {
-                if (TargetZip != null) {
-                    ZipEntry ze = TargetZip.AddFile(absFile);
-                    ze.FileName = newName;
-                }
-                if (!string.IsNullOrWhiteSpace(TargetFolder)) {
-                    File.Copy(absFile, Path.Combine(TargetFolder, newName));
+                if (BlueGreenDeploy != BlueGreenDeployEnum.None && AllowSubstitutionFiles.Contains(PhysicalToFile(newName).ToLower())) {
+                    string contents = File.ReadAllText(absFile);
+                    contents = contents.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
+                    contents = contents.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
+                    contents = contents.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
+                    contents = contents.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
+                    contents = contents.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Green" : "-Blue");
+                    if (TargetZip != null) {
+                        ZipEntry ze = TargetZip.AddEntry(newName, contents);
+                    }
+                    if (!string.IsNullOrWhiteSpace(TargetFolder)) {
+                        File.WriteAllText(Path.Combine(TargetFolder, newName), contents);
+                    }
+                } else {
+                    if (TargetZip != null) {
+                        ZipEntry ze = TargetZip.AddFile(absFile);
+                        ze.FileName = newName;
+                    }
+                    if (!string.IsNullOrWhiteSpace(TargetFolder)) {
+                        File.Copy(absFile, Path.Combine(TargetFolder, newName));
+                    }
                 }
             }
         }
@@ -1243,12 +1290,11 @@ namespace CopySite {
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
                 AddAllFilesToSite(Path.Combine("wwwroot", MAINTENANCEFOLDER));
-                AddAllFilesToSite(Path.Combine("wwwroot", "lib"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
-                AddFileToSite(Path.Combine("wwwroot", "logo.jpg"));
+                AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
                 AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
                 DeleteFolder(Path.Combine(SiteLocation, "Areas"));
@@ -1283,7 +1329,7 @@ namespace CopySite {
                 AddAllFilesToSite("SiteFiles");
                 AddAllFilesToSite("SiteTemplates");
                 //AddAllFilesToSite("Vault");
-                AddFileToSite("logo.jpg");
+                AddFileToSite("logo.jpg", Optional: true);
                 AddFileToSite("Global.asax");
                 AddFileToSite("robots.txt");
                 AddFileToSite("Web.config");
@@ -1354,18 +1400,22 @@ namespace CopySite {
                 AddFilesToSiteAndRecurse(dir, path);
             }
         }
-        private void AddFileToSite(string unzipFile, string targetFile) {
-            Console.WriteLine("Copying {0}", targetFile);
-            string path = Path.GetDirectoryName(targetFile);
-            Directory.CreateDirectory(path);
-            File.Copy(unzipFile, targetFile, true);
+        private void AddFileToSite(string unzipFile, string targetFile, bool Optional = false) {
+            if (!Optional || File.Exists(unzipFile)) {
+                Console.WriteLine("Copying {0}", targetFile);
+                string path = Path.GetDirectoryName(targetFile);
+                Directory.CreateDirectory(path);
+                File.Copy(unzipFile, targetFile, true);
+            }
         }
-        private void AddFileToSite(string file) {
+        private void AddFileToSite(string file, bool Optional = false) {
             string unzipFile = Path.Combine(BaseDirectory, UNZIPFOLDER, file);
-            string targetFile = Path.Combine(SiteLocation, file);
-            Console.WriteLine("Copying {0}", targetFile);
-            File.Delete(targetFile);
-            File.Copy(unzipFile, targetFile, true);
+            if (!Optional || File.Exists(unzipFile)) {
+                string targetFile = Path.Combine(SiteLocation, file);
+                Console.WriteLine("Copying {0}", targetFile);
+                File.Delete(targetFile);
+                File.Copy(unzipFile, targetFile, true);
+            }
         }
         private void RunCommand(RunCmd run) {
 
