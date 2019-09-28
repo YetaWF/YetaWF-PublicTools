@@ -751,8 +751,11 @@ namespace CopySite {
                 List<string> products = (from d in Directory.GetDirectories(domainFolder) select Path.GetFileName(d)).ToList();
                 foreach (string product in products) {
                     string productFolder = Path.Combine(SiteLocation, addonsFolder, domain, product);
-                    if (!packageMap.Contains($"{domain}.{product} ")) // simple string check (note trailing space)
-                        Directory.Delete(productFolder, false);// remove symlink
+                    if (!packageMap.Contains($"{domain}.{product} ")) {// simple string check (note trailing space)
+                        // some packages use Softelvdm.{product} in package map but are located at YetaWF.{product} so allow for that
+                        if (domain != "YetaWF" || !packageMap.Contains($"Softelvdm.{product} ")) // simple string check (note trailing space)
+                            Directory.Delete(productFolder, false);// remove symlink
+                    }
                 }
             }
             AddAllFilesToTarget(addonsFolder);
