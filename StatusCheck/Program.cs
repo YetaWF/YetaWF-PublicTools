@@ -37,7 +37,7 @@ namespace YetaWF.PublicTools.StatusCheck {
 
             // Initialize the YetaWF console application
             Console.WriteLine("Starting YetaWF Support...");
-            StartupBatch.Start(AppDomain.CurrentDomain.BaseDirectory, Settings.SiteDomain);
+            YetaWF.ConsoleStartup.StartupConsole.Start(AppDomain.CurrentDomain.BaseDirectory, Settings.SiteDomain);
 
             Console.WriteLine("Processing...");
 
