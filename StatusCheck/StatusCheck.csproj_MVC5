@@ -72,6 +72,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CoreComponents\ConsoleStartup\ConsoleStartup.csproj">
+      <Project>{06396b37-aeae-4e3a-92b6-224ad6a95690}</Project>
+      <Name>ConsoleStartup</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CoreComponents\Core\Core.csproj">
       <Project>{71ACC7AC-2622-4127-B925-D058C01A39E5}</Project>
       <Name>Core</Name>
