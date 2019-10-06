@@ -650,6 +650,8 @@ namespace CopySite {
 
                 AddPublishOutput();
                 AddPublishOutputFiles("*.deps.json");
+                AddPublishOutputFiles("*.runtimeconfig.json");
+                AddPublishOutputFiles("*.dll.config");
                 AddPublishOutputFiles("*.exe.config");
 
                 AddAllFilesToTarget(DATAFOLDER,
@@ -769,6 +771,7 @@ namespace CopySite {
             if (ExcludeFiles == null)
                 ExcludeFiles = new List<string>();
             ExcludeFiles.Add(@".*\.lastcodeanalysissucceeded");
+            ExcludeFiles.Add(@".*\.pdb");
             if (ExcludeFolders == null)
                 ExcludeFolders = new List<string>();
             ExcludeFolders.Add(@"\.git");
@@ -1294,8 +1297,6 @@ namespace CopySite {
                 AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
                 AddAllFilesToSite(Path.Combine("wwwroot", MAINTENANCEFOLDER));
                 AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
-                AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
-                AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
                 //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
                 AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
                 AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
@@ -1309,11 +1310,7 @@ namespace CopySite {
                 AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
                 AddAllFilesToSite("SiteTemplates");
 
-                AddFilesToSite(@"*.dll", ExcludeFolders: new List<string> { @"wwwroot" });
-                AddFilesToSite(@"*.exe", ExcludeFolders: new List<string> { @"wwwroot" });
-                AddFilesToSite(@"*.pdb", ExcludeFolders: new List<string> { @"wwwroot" });
-                AddFilesToSite(@"*.json", ExcludeFolders: new List<string> { @"wwwroot" });
-                AddFilesToSite(@"*.config", ExcludeFolders: new List<string> { @"wwwroot" });
+                AddFilesToSiteDontRecurse(Path.Combine(BaseDirectory, UNZIPFOLDER), SiteLocation, @"*.*");// dlls,exe, whatever is in the root folder
 
                 Directory.CreateDirectory(Path.Combine(SiteLocation, "logs")); // make a log folder
 
@@ -1385,7 +1382,15 @@ namespace CopySite {
                 }
             }
         }
-
+        private void AddFilesToSiteDontRecurse(string unzipPath, string targetPath, string match = "*.*", List<string> ExcludeFolders = null) {
+            if (!Directory.Exists(unzipPath)) return;
+            string[] files = Directory.GetFiles(unzipPath, match);
+            foreach (string file in files) {
+                string filename = Path.GetFileName(file);
+                string unzipFile = Path.Combine(unzipPath, filename);
+                AddFileToSite(unzipFile, Path.Combine(targetPath, filename));
+            }
+        }
         private void AddFilesToSiteAndRecurse(string unzipPath, string targetPath, string match = "*.*", List<string> ExcludeFolders = null) {
             if (!Directory.Exists(unzipPath)) return;
             string[] files = Directory.GetFiles(unzipPath, match);

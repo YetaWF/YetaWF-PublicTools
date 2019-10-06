@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>5.0.0.0</Version>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <DefineConstants>$(DefineConstants);MVC6;NETCOREAPP</DefineConstants>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
@@ -12,9 +12,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <RootNamespace>YetaWF.PublicTools.StatusCheck</RootNamespace>
-
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -26,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CoreComponents\ConsoleStartup\ConsoleStartup.csproj" />
     <ProjectReference Include="..\..\CoreComponents\Core\Core.csproj" />
     <ProjectReference Include="..\..\Modules\YetaWF\Caching\Caching.csproj" />
     <ProjectReference Include="..\..\Modules\YetaWF\SiteProperties\SiteProperties.csproj" />
