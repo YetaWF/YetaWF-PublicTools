@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CopySite": {
+      "commandName": "Project",
+      "commandLineArgs": "Restore \"C:\\Development\\YetaWF2\\PublicTools\\DeploySite\\DeploySite.yaml\" Blue",
+      "workingDirectory": "\\Development\\YetaWF"
+    }
+  }
+}
