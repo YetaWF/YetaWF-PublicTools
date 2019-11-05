@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>5.0.0.0</Version>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <DefineConstants>$(DefineConstants);MVC6;NETCOREAPP</DefineConstants>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <RootNamespace>Softelvdm.Tools.DeploySite</RootNamespace>
+
+    <OutputType>Exe</OutputType>
+
+    <AssemblyName>Softelvdm.DeploySite</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ProgramOrig.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="28.0.1" />
+    <PackageReference Include="Ionic.Zip" Version="1.9.1.8" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" />
+    <PackageReference Include="YamlDotNet" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
