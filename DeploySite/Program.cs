@@ -44,15 +44,19 @@ namespace Softelvdm.Tools.DeploySite {
 
             // Determine Backup/Restore
             CopyAction action;
-            if (args[0] == "Backup") {
+            if (args[0].ToLower() == "backup") {
                 action = CopyAction.Backup;
-            } else if (args[0] == "Restore") {
+            } else if (args[0].ToLower() == "restore") {
                 action = CopyAction.Restore;
             } else
                 return Usage();
 
             // Determine blue/green
             if (args.Length == 3) {
+
+                if (action == CopyAction.Restore)
+                    throw new Error("Can't specify Blue/Green when using Restore");
+
                 string blueGreen = args[2].ToLower();
                 if (blueGreen == "blue")
                     BlueGreenDeploy = BlueGreenDeployEnum.Blue;

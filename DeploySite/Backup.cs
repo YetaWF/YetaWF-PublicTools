@@ -75,6 +75,8 @@ namespace Softelvdm.Tools.DeploySite {
 
             // Upload everything
             UploadAll();
+
+            IOHelper.DeleteFolder(BackupTempFolder);
         }
 
         private void BackupDBs() {
@@ -87,6 +89,7 @@ namespace Softelvdm.Tools.DeploySite {
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "None")]
         private void BackupDB(Database db) {
+
             Console.WriteLine("Backing up DB {0}", db.DevDB);
 
             string dbFileName = Path.Combine(BackupTempFolder, Program.DBFOLDER, $"{db.DevDB}.bak");
