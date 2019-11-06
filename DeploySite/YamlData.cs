@@ -62,7 +62,8 @@ namespace Softelvdm.Tools.DeploySite {
         public string From { get; set; }
         [Required]
         public string To { get; set; }
-        public bool Replace { get; set; }
+        public bool ReplaceBG { get; set; }
+        public bool Conditional { get; set; }
     }
 
     public class Site {
