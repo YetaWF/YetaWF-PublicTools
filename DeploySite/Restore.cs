@@ -1,6 +1,6 @@
 ﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
-using Ionic.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -66,8 +66,8 @@ namespace Softelvdm.Tools.DeploySite {
             IOHelper.DeleteFolder(folder);
             Directory.CreateDirectory(folder);
 
-            ZipFile zipFile = ZipFile.Read(Program.YamlData.Site.Zip);
-            zipFile.ExtractAll(folder);
+            FastZip zipFile = new FastZip();
+            zipFile.ExtractZip(Program.YamlData.Site.Zip, folder, null);
 
             //File.WriteAllText(Path.Combine(BaseDirectory, "UNZIPDONE"), "Done");
             //}

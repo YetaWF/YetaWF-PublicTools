@@ -1,6 +1,5 @@
 ﻿using FluentFTP;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -21,13 +20,13 @@ namespace Softelvdm.Tools.DeploySite {
 
                     foreach (FTPCopy copy in Program.YamlData.FTP.Copy) {
                         string from = Path.Combine(Program.YamlData.Deploy.BaseFolder, copy.From);
-                        Upload(ftpClient, from, copy.To, ReplaceBG: true);
+                        Upload(ftpClient, from, copy.To, Replace: copy.Replace);
                     }
                 }
             }
         }
 
-        private void Upload(FtpClient ftpClient, string from, string to, bool ReplaceBG = false) {
+        private void Upload(FtpClient ftpClient, string from, string to, bool Replace = false) {
             if (Directory.Exists(from)) {
                 Console.WriteLine($"Uploading folder {from}");
                 string[] files = Directory.GetFiles(from);
@@ -37,7 +36,7 @@ namespace Softelvdm.Tools.DeploySite {
                 }
             } else if (File.Exists(from)) {
                 Console.WriteLine($"Uploading file {from}");
-                if (ReplaceBG) {
+                if (Replace) {
                     string content = File.ReadAllText(from);
                     content = Program.ReplaceBlueGreen(content);
                     byte[] btes = Encoding.ASCII.GetBytes(content);
