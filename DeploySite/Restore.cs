@@ -119,7 +119,12 @@ namespace Softelvdm.Tools.DeploySite {
 
                 string SQLBackupQuery = $"RESTORE DATABASE [{db.ProdDB}] FROM DISK = '{dbFileName}' WITH REPLACE ";
 
-                string dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
+                string dataFolder;
+                if (IsMVC6)
+                    dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
+                else
+                    dataFolder = Path.Combine(RestoreTargetSite, "..", DBDATAFOLDER);
+
                 Directory.CreateDirectory(dataFolder);
 
                 StringBuilder sb = new StringBuilder();

@@ -41,8 +41,9 @@ namespace Softelvdm.Tools.DeploySite {
                     content = Program.ReplaceBlueGreen(content);
                     byte[] btes = Encoding.ASCII.GetBytes(content);
                     ftpClient.Upload(btes, to, createRemoteDir: true);
-                } else
+                } else {
                     ftpClient.UploadFile(from, to, createRemoteDir: true);
+                }
             } else
                 throw new Error($"Can't upload {from} - not found");
         }
