@@ -15,7 +15,7 @@ namespace Softelvdm.Tools.DeploySite {
     public class Restore {
 
         public const string UNZIPFOLDER = "TEMP";
-        public const string DBDATAFOLDER = "Data";
+        public const string DBDATAFOLDER = "DBs";
 
         private string RestoreTargetSite;
 

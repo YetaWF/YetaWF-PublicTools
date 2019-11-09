@@ -35,12 +35,9 @@ namespace Softelvdm.Tools.DeploySite {
         public string Type { get; set; }
         [Required]
         public string To { get; set; }
-        [Required]
         public string From { get; set; }
         [Required]
         public string BaseFolder { get; set; }
-        [Required]
-        public string Website { get; set; }
         public string ConfigParm { get; set; }
         public bool Localization { get; set; } = true;
         public bool SiteTemplates { get; set; } = true;

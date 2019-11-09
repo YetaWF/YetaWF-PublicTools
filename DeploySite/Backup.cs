@@ -33,7 +33,7 @@ namespace Softelvdm.Tools.DeploySite {
             } else
                 throw new Error($"Invalid deploy type {Program.YamlData.Deploy.Type} - only zip or folder are supported");
 
-            BackupSiteLocation = Path.Combine(Program.YamlData.Deploy.BaseFolder, Program.YamlData.Deploy.Website);
+            BackupSiteLocation = Path.Combine(Program.YamlData.Deploy.BaseFolder, "Website");
             if (!Directory.Exists(BackupSiteLocation))
                 throw new Error($"Website folder {BackupSiteLocation} not found");
 
@@ -128,6 +128,10 @@ namespace Softelvdm.Tools.DeploySite {
 
             // Add folders
             if (IsMVC6) {
+
+                if (string.IsNullOrWhiteSpace(Program.YamlData.Deploy.From)) {
+                    throw new Error("The published output path created by Visual Studio Publish or dotnet publish must be defined using Deploy:From and is missing");
+                }
 
                 AddPublishOutput();
                 AddPublishOutputFiles("*.deps.json");
