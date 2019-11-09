@@ -1,4 +1,6 @@
-﻿using System;
+﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+
+using System;
 using System.ComponentModel.DataAnnotations;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;

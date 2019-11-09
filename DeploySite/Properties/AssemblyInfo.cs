@@ -3,7 +3,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("YetaWF Copy Site Utility")]
+[assembly: AssemblyTitle("YetaWF Deploy Site Utility")]
 [assembly: AssemblyDescription("YetaWF DeploySite Utility")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Softel vdm, Inc.")]
@@ -15,9 +15,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("5.0.0.0")]
 
-//[assembly: Package(PackageTypeEnum.Utility, "Softelvdm.CopySite.exe")]
+//[assembly: Package(PackageTypeEnum.Utility, "Softelvdm.DeploySite.exe")]
 //[assembly: PackageInfo("https://YetaWF.com/UpdateServer",
-//    "https://yetawf.com/Documentation/YetaWF/CopySite",
+//    "https://yetawf.com/Documentation/YetaWF/DeploySite",
 //    "https://YetaWF.com/Documentation/YetaWF/Support",
-//    "https://yetawf.com/Documentation/YetaWF/CopySite#Release%20Notice",
-//    "https://yetawf.com/Documentation/YetaWF/CopySite#License")]
+//    "https://yetawf.com/Documentation/YetaWF/DeploySite#Release%20Notice",
+//    "https://yetawf.com/Documentation/YetaWF/DeploySite#License")]

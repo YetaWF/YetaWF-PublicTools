@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Softelvdm.Tools.DeploySite {

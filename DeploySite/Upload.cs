@@ -1,4 +1,6 @@
-﻿using FluentFTP;
+﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+
+using FluentFTP;
 using System;
 using System.IO;
 using System.Net;
@@ -20,7 +22,7 @@ namespace Softelvdm.Tools.DeploySite {
 
                     foreach (FTPCopy copy in Program.YamlData.FTP.Copy) {
                         string from = Path.Combine(Program.YamlData.Deploy.BaseFolder, copy.From);
-                        Upload(ftpClient, from, copy.To, ReplaceBG: copy.ReplaceBG, copy.Conditional);
+                        Upload(ftpClient, from, copy.To, ReplaceBG: copy.ReplaceBG, Conditional: copy.Conditional);
                     }
                 }
             }

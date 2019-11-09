@@ -36,9 +36,9 @@ namespace Softelvdm.Tools.DeploySite {
         private const string USAGE = "Usage: {0} {{Backup|Restore}} \"...yaml file with deploy config...\"  [{{Blue|Green}}] ";
 
         private int Run(string[] args) {
-
+#if MVC6
             System.Text.Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
+#endif
             if (args.Length < 2 || args.Length > 3)
                 return Usage();
 
