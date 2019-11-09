@@ -2,7 +2,7 @@
   "profiles": {
     "CopySite": {
       "commandName": "Project",
-      "commandLineArgs": "Restore \"C:\\Development\\YetaWF2\\PublicTools\\DeploySite\\DeploySite.yaml\" Blue",
+      "commandLineArgs": "Backup \"C:\\Development\\YetaWF2\\DeploySite.Windows.yaml\" Green",
       "workingDirectory": "\\Development\\YetaWF"
     }
   }

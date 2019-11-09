@@ -1,4 +1,4 @@
-﻿using Ionic.Zip;
+﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -15,7 +15,7 @@ namespace Softelvdm.Tools.DeploySite {
         public const string DONTDEPLOY = "dontdeploy.txt";
 
         private string BackupTargetFolder;// type = folder
-        private Ionic.Zip.ZipFile BackupTargetZip;// type = zip
+        private BackupZipFile BackupTargetZip;// type = zip
         private string BackupTempFolder;
 
         private bool IsMVC6 { get; set; }
@@ -33,7 +33,7 @@ namespace Softelvdm.Tools.DeploySite {
             } else
                 throw new Error($"Invalid deploy type {Program.YamlData.Deploy.Type} - only zip or folder are supported");
 
-            BackupSiteLocation = Path.Combine(Program.YamlData.Deploy.BaseFolder, Program.YamlData.Deploy.Website);
+            BackupSiteLocation = Path.Combine(Program.YamlData.Deploy.BaseFolder, "Website");
             if (!Directory.Exists(BackupSiteLocation))
                 throw new Error($"Website folder {BackupSiteLocation} not found");
 
@@ -57,7 +57,7 @@ namespace Softelvdm.Tools.DeploySite {
                 Directory.CreateDirectory(path);
                 File.Delete(to);
 
-                BackupTargetZip = new Ionic.Zip.ZipFile(to);
+                BackupTargetZip = new BackupZipFile(to);
 
             } else {
                 // clean target folder
@@ -129,6 +129,10 @@ namespace Softelvdm.Tools.DeploySite {
             // Add folders
             if (IsMVC6) {
 
+                if (string.IsNullOrWhiteSpace(Program.YamlData.Deploy.From)) {
+                    throw new Error("The published output path created by Visual Studio Publish or dotnet publish must be defined using Deploy:From and is missing");
+                }
+
                 AddPublishOutput();
                 AddPublishOutputFiles("*.deps.json");
                 AddPublishOutputFiles("*.runtimeconfig.json");
@@ -193,6 +197,7 @@ namespace Softelvdm.Tools.DeploySite {
             if (BackupTargetZip != null) {
                 Console.WriteLine("Creating Zip file...");
                 BackupTargetZip.Save();
+                BackupTargetZip.Dispose();
                 Console.WriteLine("Zip file completed");
             }
         }
@@ -207,8 +212,7 @@ namespace Softelvdm.Tools.DeploySite {
                 Console.WriteLine("Copying {0}", file);
                 string relFile = Path.Combine("", filename);
                 if (BackupTargetZip != null) {
-                    ZipEntry ze = BackupTargetZip.AddFile(file);
-                    ze.FileName = relFile;
+                    BackupTargetZip.AddFile(file, relFile);
                 }
                 if (BackupTargetFolder != null) {
                     Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(BackupTargetFolder, relFile)));
@@ -303,13 +307,11 @@ namespace Softelvdm.Tools.DeploySite {
                     }
 
                     string relFile = Path.Combine(relPath, filename);
-                    string searchFile = relFile.Replace("\\", "/");
+                    string searchFile = BackupZipFile.CleanFileName(relFile);//$$$$verify
                     if (BackupTargetZip != null) {
-                        ZipEntry found = (from e in BackupTargetZip.Entries where e.FileName == searchFile select e).FirstOrDefault();
-                        if (found == null) {
-                            ZipEntry ze = BackupTargetZip.AddFile(file);
-                            ze.FileName = relFile;
-                        }
+                        bool found = (from e in BackupTargetZip.Entries where e.RelativeName == searchFile select e).Any();
+                        if (!found)
+                            BackupTargetZip.AddFile(file, relFile);
                     }
                     if (BackupTargetFolder != null) {
                         Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(BackupTargetFolder, relFile)));
@@ -338,8 +340,7 @@ namespace Softelvdm.Tools.DeploySite {
                 // no files or folders, just add the folder in the ZIP file
                 // some modules/data providers check folder existence to determine whether the module is installed
                 if (BackupTargetZip != null) {
-                    BackupTargetZip.AddDirectoryByName(relPath);
-                    string absFolder = Path.Combine(BackupSiteLocation, relPath);
+                    //$$$$BackupTargetZip.AddDirectoryByName(relPath);
                 }
                 if (BackupTargetFolder != null) {
                     string absFolder = Path.Combine(BackupTargetFolder, relPath);
@@ -500,15 +501,14 @@ namespace Softelvdm.Tools.DeploySite {
                     string contents = File.ReadAllText(absFile);
                     contents = Program.ReplaceBlueGreen(contents);
                     if (BackupTargetZip != null) {
-                        ZipEntry ze = BackupTargetZip.AddEntry(newName, contents);
+                        BackupTargetZip.AddData(contents, newName);
                     }
                     if (BackupTargetFolder != null) {
                         File.WriteAllText(Path.Combine(BackupTargetFolder, newName), contents);
                     }
                 } else {
                     if (BackupTargetZip != null) {
-                        ZipEntry ze = BackupTargetZip.AddFile(absFile);
-                        ze.FileName = newName;
+                        BackupTargetZip.AddFile(absFile, newName);
                     }
                     if (BackupTargetFolder != null) {
                         File.Copy(absFile, Path.Combine(BackupTargetFolder, newName));

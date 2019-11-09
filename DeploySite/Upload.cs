@@ -1,6 +1,5 @@
 ﻿using FluentFTP;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -21,13 +20,13 @@ namespace Softelvdm.Tools.DeploySite {
 
                     foreach (FTPCopy copy in Program.YamlData.FTP.Copy) {
                         string from = Path.Combine(Program.YamlData.Deploy.BaseFolder, copy.From);
-                        Upload(ftpClient, from, copy.To, ReplaceBG: true);
+                        Upload(ftpClient, from, copy.To, ReplaceBG: copy.ReplaceBG, copy.Conditional);
                     }
                 }
             }
         }
 
-        private void Upload(FtpClient ftpClient, string from, string to, bool ReplaceBG = false) {
+        private void Upload(FtpClient ftpClient, string from, string to, bool ReplaceBG = false, bool Conditional = false) {
             if (Directory.Exists(from)) {
                 Console.WriteLine($"Uploading folder {from}");
                 string[] files = Directory.GetFiles(from);
@@ -42,8 +41,25 @@ namespace Softelvdm.Tools.DeploySite {
                     content = Program.ReplaceBlueGreen(content);
                     byte[] btes = Encoding.ASCII.GetBytes(content);
                     ftpClient.Upload(btes, to, createRemoteDir: true);
-                } else
-                    ftpClient.UploadFile(from, to, createRemoteDir: true);
+                } else {
+                    if (Conditional) {
+                        if (ftpClient.FileExists(to)) {
+                            long sizeTo = ftpClient.GetFileSize(to);
+                            DateTime timeTo = ftpClient.GetModifiedTime(to);
+                            FileInfo fi = new FileInfo(from);
+                            long sizeFrom = fi.Length;
+                            DateTime timeFrom = File.GetLastWriteTime(from);
+                            if (sizeTo != sizeFrom || timeFrom >= timeTo)
+                                ftpClient.UploadFile(from, to, createRemoteDir: true);
+                            else
+                                Console.WriteLine($"Skipped - already uploaded");
+                        } else {
+                            ftpClient.UploadFile(from, to, createRemoteDir: true);
+                        }
+                    } else {
+                        ftpClient.UploadFile(from, to, createRemoteDir: true);
+                    }
+                }
             } else
                 throw new Error($"Can't upload {from} - not found");
         }

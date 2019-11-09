@@ -1,6 +1,6 @@
 ﻿/* Copyright © 2019 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
-using Ionic.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -15,7 +15,7 @@ namespace Softelvdm.Tools.DeploySite {
     public class Restore {
 
         public const string UNZIPFOLDER = "TEMP";
-        public const string DBDATAFOLDER = "Data";
+        public const string DBDATAFOLDER = "DBs";
 
         private string RestoreTargetSite;
 
@@ -66,8 +66,8 @@ namespace Softelvdm.Tools.DeploySite {
             IOHelper.DeleteFolder(folder);
             Directory.CreateDirectory(folder);
 
-            ZipFile zipFile = ZipFile.Read(Program.YamlData.Site.Zip);
-            zipFile.ExtractAll(folder);
+            FastZip zipFile = new FastZip();
+            zipFile.ExtractZip(Program.YamlData.Site.Zip, folder, null);
 
             //File.WriteAllText(Path.Combine(BaseDirectory, "UNZIPDONE"), "Done");
             //}
@@ -119,7 +119,12 @@ namespace Softelvdm.Tools.DeploySite {
 
                 string SQLBackupQuery = $"RESTORE DATABASE [{db.ProdDB}] FROM DISK = '{dbFileName}' WITH REPLACE ";
 
-                string dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
+                string dataFolder;
+                if (IsMVC6)
+                    dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
+                else
+                    dataFolder = Path.Combine(RestoreTargetSite, "..", DBDATAFOLDER);
+
                 Directory.CreateDirectory(dataFolder);
 
                 StringBuilder sb = new StringBuilder();
