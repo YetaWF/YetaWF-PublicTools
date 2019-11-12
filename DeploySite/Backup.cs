@@ -125,7 +125,7 @@ namespace Softelvdm.Tools.DeploySite {
             Console.WriteLine("Copying files...");
 
             // Add Dbs
-            AddFilesToTargetAndRecurse(Path.Combine(BackupTempFolder, Program.DBFOLDER), Program.DBFOLDER);
+            AddFilesToTargetAndRecurse(Path.Combine(BackupTempFolder, Program.DBFOLDER), Program.DBFOLDER, Optional: true);
 
             // Add folders
             if (IsMVC6) {

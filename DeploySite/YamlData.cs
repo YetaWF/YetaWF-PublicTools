@@ -10,7 +10,6 @@ namespace Softelvdm.Tools.DeploySite {
         [Required]
         public Deploy Deploy { get; set; }
         public FTP FTP { get; set; }
-        [Required]
         public Site Site { get; set; }
     }
 

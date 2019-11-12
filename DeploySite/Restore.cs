@@ -27,6 +27,8 @@ namespace Softelvdm.Tools.DeploySite {
 
             if (Program.YamlData.Deploy.Type != "zip")
                 throw new Error($"Invalid deploy type {Program.YamlData.Deploy.Type} - only zip deploys can be restored");
+            if (Program.YamlData.Site == null)
+                throw new Error($"No Site information provided in yaml file");
 
             RestoreTargetSite = Program.YamlData.Site.Location;
 
