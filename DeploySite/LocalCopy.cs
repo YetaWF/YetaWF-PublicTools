@@ -36,6 +36,8 @@ namespace Softelvdm.Tools.DeploySite {
                 }
             } else if (File.Exists(from)) {
                 Console.WriteLine($"Copying file {from}");
+                string folder = Path.GetDirectoryName(to);
+                Directory.CreateDirectory(folder);
                 if (ReplaceBG) {
                     string content = File.ReadAllText(from);
                     content = Program.ReplaceBlueGreen(content);

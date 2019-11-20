@@ -17,6 +17,8 @@ namespace Softelvdm.Tools.DeploySite {
         public const string UNZIPFOLDER = "TEMP";
         public const string DBDATAFOLDER = "DBs";
 
+        public const string OFFLINE = "Offline For Maintenance.html";
+
         private string RestoreTargetSite;
 
         private bool IsMVC6 { get; set; }
@@ -32,7 +34,6 @@ namespace Softelvdm.Tools.DeploySite {
 
             RestoreTargetSite = Program.YamlData.Site.Location;
 
-            RunFirstCommands();
             ExtractAllFiles();
 
             if (Directory.Exists(Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.MARKERMVC6)))
@@ -42,8 +43,9 @@ namespace Softelvdm.Tools.DeploySite {
             else
                 Console.WriteLine("ASP.NET 4 Site");
 
-            //SetMaintenanceMode();
-            //SetUpdateIndicator();
+            SetMaintenanceMode();
+
+            RunFirstCommands();
 
             RestoreDBs();
 
@@ -51,10 +53,36 @@ namespace Softelvdm.Tools.DeploySite {
 
             RunCommands();
 
-            //ClearMaintenanceMode();
+            ClearMaintenanceMode();
 
             string folder = Path.Combine(RestoreTargetSite, UNZIPFOLDER);
             IOHelper.DeleteFolder(folder);
+        }
+
+        private void SetMaintenanceMode() {
+            if (Program.YamlData.Site.Maintenance) {
+                string maintSrcFile, maintTargetFile;
+                if (IsMVC6) {
+                    maintSrcFile = Path.Combine(RestoreTargetSite, UNZIPFOLDER, "wwwroot", Program.MAINTENANCEFOLDER, OFFLINE);
+                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
+                } else {
+                    maintSrcFile = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.MAINTENANCEFOLDER, OFFLINE);
+                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
+                }
+                File.Copy(maintSrcFile, maintTargetFile, true);
+            }
+        }
+
+        private void ClearMaintenanceMode() {
+            if (Program.YamlData.Site.Maintenance) {
+                string maintTargetFile;
+                if (IsMVC6) {
+                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
+                } else {
+                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
+                }
+                File.Delete(maintTargetFile);
+            }
         }
 
         private void ExtractAllFiles() {
@@ -243,9 +271,16 @@ namespace Softelvdm.Tools.DeploySite {
             return re.IsMatch(fileName);
         }
 
-        private void AddFilesToSiteDontRecurse(string unzipPath, string targetPath, string match = "*.*", List<string> ExcludeFolders = null) {
+        private void AddFilesToSiteDontRecurse(string unzipPath, string targetPath, string match = "*.*") {
             if (!Directory.Exists(unzipPath)) return;
-            string[] files = Directory.GetFiles(unzipPath, match);
+            // delete all files without recursing
+            string[] files = Directory.GetFiles(targetPath, match);
+            foreach (string file in files) {
+                if (Path.GetFileName(file).ToLower() != "app_offline.htm")
+                    File.Delete(file);
+            }
+            // add new files
+            files = Directory.GetFiles(unzipPath, match);
             foreach (string file in files) {
                 string filename = Path.GetFileName(file);
                 string unzipFile = Path.Combine(unzipPath, filename);

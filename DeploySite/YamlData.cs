@@ -87,6 +87,8 @@ namespace Softelvdm.Tools.DeploySite {
         [Required]
         public string Zip { get; set; }
 
+        public bool Maintenance { get; set; }
+
         public List<RunCommand> RunFirst { get; set; }
         public List<RunCommand> Run { get; set; }
     }

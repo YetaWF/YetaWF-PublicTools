@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Softelvdm.Tools.DeploySite {
 
@@ -176,7 +175,7 @@ namespace Softelvdm.Tools.DeploySite {
                 content = content.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Green" : "-Blue");
             } else {
                 if (content.Contains("{bluegreen}") || content.Contains("{BLUEGREEN}") || content.Contains("{-BLUEGREEN}") || content.Contains("{BLUEGREEN-OTHER}") || content.Contains("{-BLUEGREEN-OTHER}"))
-                    throw new Error("BLUEGREEN variable found b ut this is not a Blue-Green deploy");
+                    throw new Error("BLUEGREEN variable found but this is not a Blue-Green deploy");
             }
             return content;
         }
