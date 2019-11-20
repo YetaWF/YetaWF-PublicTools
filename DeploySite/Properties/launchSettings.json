@@ -2,7 +2,7 @@
   "profiles": {
     "CopySite": {
       "commandName": "Project",
-      "commandLineArgs": "Backup \"C:\\Development\\YetaWF2\\DeploySite.Windows.yaml\"",
+      "commandLineArgs": "Backup \"C:\\Development\\SquareTreePNC\\DeploySite.Gillaw.yaml\"",
       "workingDirectory": "\\Development\\YetaWF"
     }
   }

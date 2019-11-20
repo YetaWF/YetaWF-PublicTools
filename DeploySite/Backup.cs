@@ -77,6 +77,9 @@ namespace Softelvdm.Tools.DeploySite {
             // Upload everything
             UploadAll();
 
+            // Local copies
+            LocalCopy();
+
             IOHelper.DeleteFolder(BackupTempFolder);
         }
 

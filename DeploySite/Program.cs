@@ -99,15 +99,14 @@ namespace Softelvdm.Tools.DeploySite {
                         throw;
                     }
                     // note that yamlData still has Blue/Green variables
+                    if (!string.IsNullOrWhiteSpace(yamlData.Deploy.DetermineBlueGreen)) {
+                        if (string.IsNullOrWhiteSpace(yamlData.Deploy.BlueRegex))
+                            throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.BlueRegex)}");
+                        if (string.IsNullOrWhiteSpace(yamlData.Deploy.GreenRegex))
+                            throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.GreenRegex)}");
 
-                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.DetermineBlueGreen))
-                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.DetermineBlueGreen)}");
-                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.BlueRegex))
-                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.BlueRegex)}");
-                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.GreenRegex))
-                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.GreenRegex)}");
-
-                    BlueGreenDeploy = DetermineNewBlueGreen(yamlData);
+                        BlueGreenDeploy = DetermineNewBlueGreen(yamlData);
+                    }
                 }
             }
 

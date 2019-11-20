@@ -10,6 +10,7 @@ namespace Softelvdm.Tools.DeploySite {
         [Required]
         public Deploy Deploy { get; set; }
         public FTP FTP { get; set; }
+        public Local Local { get; set; }
         public Site Site { get; set; }
     }
 
@@ -46,6 +47,7 @@ namespace Softelvdm.Tools.DeploySite {
         public string BlueRegex { get; set; }
         public string GreenRegex { get; set; }
     }
+
     public class FTP {
         [Required]
         public string Server { get; set; }
@@ -57,7 +59,6 @@ namespace Softelvdm.Tools.DeploySite {
         [Required]
         public List<FTPCopy> Copy { get; set; }
     }
-
     public class FTPCopy {
         [Required]
         public string From { get; set; }
@@ -65,6 +66,19 @@ namespace Softelvdm.Tools.DeploySite {
         public string To { get; set; }
         public bool ReplaceBG { get; set; }
         public bool Conditional { get; set; }
+    }
+
+    public class Local {
+        [Required]
+        public string PublishFolder { get; set; }
+        public List<LocalCopy> Copy { get; set; }
+    }
+    public class LocalCopy {
+        [Required]
+        public string From { get; set; }
+        [Required]
+        public string To { get; set; }
+        public bool ReplaceBG { get; set; }
     }
 
     public class Site {
