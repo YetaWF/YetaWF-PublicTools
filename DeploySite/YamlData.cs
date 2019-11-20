@@ -42,6 +42,9 @@ namespace Softelvdm.Tools.DeploySite {
         public string ConfigParm { get; set; }
         public bool Localization { get; set; } = true;
         public bool SiteTemplates { get; set; } = true;
+        public string DetermineBlueGreen { get; set; }
+        public string BlueRegex { get; set; }
+        public string GreenRegex { get; set; }
     }
     public class FTP {
         [Required]
