@@ -81,33 +81,36 @@ namespace Softelvdm.Tools.DeploySite {
 
                 if (action == CopyAction.Restore)
                     throw new Error("Can't specify Blue/Green when using Restore");
-
             } else {
-                // find out whether Blue or Green is running
 
-                YamlData yamlData;
-                try {
-                    YamlDotNet.Serialization.IDeserializer deserializer = Yaml.GetDeserializer();
-                    yamlData = deserializer.Deserialize<YamlData>(YamlRawContent);
-                } catch (Exception exc) {
-                    Console.WriteLine($"Input file {input} is invalid");
-                    while (exc != null) {
-                        Console.WriteLine(exc.Message);
-                        exc = exc.InnerException;
+                if (action == CopyAction.Backup) {
+                    // find out whether Blue or Green is running
+
+                    YamlData yamlData;
+                    try {
+                        YamlDotNet.Serialization.IDeserializer deserializer = Yaml.GetDeserializer();
+                        yamlData = deserializer.Deserialize<YamlData>(YamlRawContent);
+                    } catch (Exception exc) {
+                        Console.WriteLine($"Input file {input} is invalid");
+                        while (exc != null) {
+                            Console.WriteLine(exc.Message);
+                            exc = exc.InnerException;
+                        }
+                        throw;
                     }
-                    throw;
+                    // note that yamlData still has Blue/Green variables
+
+                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.DetermineBlueGreen))
+                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.DetermineBlueGreen)}");
+                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.BlueRegex))
+                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.BlueRegex)}");
+                    if (string.IsNullOrWhiteSpace(yamlData.Deploy.GreenRegex))
+                        throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.GreenRegex)}");
+
+                    BlueGreenDeploy = DetermineNewBlueGreen(yamlData);
                 }
-                // note that yamlData still has Blue/Green variables
-
-                if (string.IsNullOrWhiteSpace(yamlData.Deploy.DetermineBlueGreen))
-                    throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.DetermineBlueGreen)}");
-                if (string.IsNullOrWhiteSpace(yamlData.Deploy.BlueRegex))
-                    throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.BlueRegex)}");
-                if (string.IsNullOrWhiteSpace(yamlData.Deploy.GreenRegex))
-                    throw new Error($"Can't determine Blue/Green - Yaml file doesn't define {nameof(yamlData.Deploy)}:{nameof(yamlData.Deploy.GreenRegex)}");
-
-                BlueGreenDeploy = DetermineNewBlueGreen(yamlData);
             }
+
             content = ReplaceBlueGreen(YamlRawContent);
 
             // deserialize yamldata - yamlData no longer has Blue/Green variables
