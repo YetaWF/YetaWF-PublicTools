@@ -152,6 +152,7 @@ namespace Softelvdm.Tools.DeploySite {
                     AddAllFilesToTarget("Localization");
                     AddAllFilesToTarget("LocalizationCustom", Optional: true);
                 }
+                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
@@ -162,7 +163,6 @@ namespace Softelvdm.Tools.DeploySite {
                 AddConfigFileToTarget("hosting.{0}json", "hosting.json");
                 AddConfigFileToTarget("Web.{0}config", "Web.config");
 
-                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
                 AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
                 AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
