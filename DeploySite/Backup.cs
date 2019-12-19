@@ -160,7 +160,7 @@ namespace Softelvdm.Tools.DeploySite {
                     AddAllFilesToTarget("SiteTemplates", Optional: true);
                 //AddAllFilesToPublishFolder("VaultPrivate");
                 AddConfigFileToTarget("app.{0}config", "app.config");
-                AddConfigFileToTarget("hosting.{0}json", "hosting.json");
+                AddConfigFileToTarget("hosting.{0}json", "hosting.json", Optional: true);
                 AddConfigFileToTarget("Web.{0}config", "Web.config");
 
                 AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
