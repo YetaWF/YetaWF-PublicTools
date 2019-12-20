@@ -155,7 +155,7 @@ namespace Softelvdm.Tools.DeploySite {
                 AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" }, Optional: true);
+                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
                 if (Program.YamlData.Deploy.SiteTemplates)
                     AddAllFilesToTarget("SiteTemplates", Optional: true);
                 //AddAllFilesToPublishFolder("VaultPrivate");
@@ -253,6 +253,7 @@ namespace Softelvdm.Tools.DeploySite {
                 ExcludeFiles = new List<string>();
             ExcludeFiles.Add(@".*\.lastcodeanalysissucceeded");
             ExcludeFiles.Add(@".*\.pdb");
+            ExcludeFiles.Add(@".*\.d\.ts");
             if (ExcludeFolders == null)
                 ExcludeFolders = new List<string>();
             ExcludeFolders.Add(@"\.git");
