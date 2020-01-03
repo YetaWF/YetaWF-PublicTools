@@ -538,7 +538,7 @@ namespace Softelvdm.Tools.DeploySite {
                 return;
             }
             if (!Optional)
-                throw new Error("Config file {0} not found", relFile);
+                throw new Error($"Config file {0} not found", relFile);
         }
     }
 }
