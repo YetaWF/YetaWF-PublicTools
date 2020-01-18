@@ -174,7 +174,10 @@ namespace Softelvdm.Tools.DeploySite {
 
                 AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
                 AddAllFilesToTarget("AddonsCustom", Optional: true);
-                AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.pdb", @".*\.xml" });
+                if (Program.YamlData.Deploy.Debug)
+                    AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.xml" });
+                else
+                    AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.pdb", @".*\.xml" });
                 AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
                 AddFileToTarget(Path.Combine("node_modules", "Web.config"));
                 AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
@@ -252,7 +255,8 @@ namespace Softelvdm.Tools.DeploySite {
             if (ExcludeFiles == null)
                 ExcludeFiles = new List<string>();
             ExcludeFiles.Add(@".*\.lastcodeanalysissucceeded");
-            ExcludeFiles.Add(@".*\.pdb");
+            if (!Program.YamlData.Deploy.Debug)
+                ExcludeFiles.Add(@".*\.pdb");
             ExcludeFiles.Add(@".*\.d\.ts");
             if (ExcludeFolders == null)
                 ExcludeFolders = new List<string>();
