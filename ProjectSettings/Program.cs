@@ -79,6 +79,8 @@ namespace Softelvdm.Tools.ProjectSettings {
                 pgm.OneProjectFolderWebsiteLinks(Path.Combine(solFolder, "CoreComponents"), solFolder, "YetaWF", "Core", TargetCompany: false);
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF", "PostgreSQL"), Path.Combine(solFolder, "DataProvider", "PostgreSQL", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF", "SQL"), Path.Combine(solFolder, "DataProvider", "SQL", "Addons"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF", "SQLGeneric"), Path.Combine(solFolder, "DataProvider", "SQLGeneric", "Addons"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF", "File"), Path.Combine(solFolder, "DataProvider", "File", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "Localization"), Path.Combine(solFolder, "Localization"));
                 MakeSymLink(Path.Combine(solFolder, "CoreComponents", "Core", "node_modules"), Path.Combine(solFolder, "Website", "node_modules"));
             }
