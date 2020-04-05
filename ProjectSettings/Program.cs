@@ -79,10 +79,12 @@ namespace Softelvdm.Tools.ProjectSettings {
                 pgm.OneProjectFolderWebsiteLinks(Path.Combine(solFolder, "CoreComponents"), solFolder, "YetaWF", "Core", TargetCompany: false);
 
                 Directory.CreateDirectory(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "File"), Path.Combine(solFolder, "DataProvider", "File", "Addons"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "Localization"), Path.Combine(solFolder, "DataProvider", "Localization", "Addons"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "ModuleDefinition"), Path.Combine(solFolder, "DataProvider", "ModuleDefinition", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "PostgreSQL"), Path.Combine(solFolder, "DataProvider", "PostgreSQL", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQL"), Path.Combine(solFolder, "DataProvider", "SQL", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQLGeneric"), Path.Combine(solFolder, "DataProvider", "SQLGeneric", "Addons"));
-                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "File"), Path.Combine(solFolder, "DataProvider", "File", "Addons"));
 
                 MakeSymLink(Path.Combine(solFolder, "Website", "Localization"), Path.Combine(solFolder, "Localization"));
                 MakeSymLink(Path.Combine(solFolder, "CoreComponents", "Core", "node_modules"), Path.Combine(solFolder, "Website", "node_modules"));
