@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="31.2.0" />
+    <PackageReference Include="FluentFTP" Version="32.3.3" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview1.20021.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
