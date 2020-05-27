@@ -2,7 +2,7 @@
   "profiles": {
     "CopySite": {
       "commandName": "Project",
-      "commandLineArgs": "Backup \"C:\\Development\\SquareTreePNC\\DeploySite.Gillaw.yaml\"",
+      "commandLineArgs": "Backup \"C:\\Development\\Formulaws\\DeploySite.Windows.yaml\" Green",
       "workingDirectory": "\\Development\\YetaWF"
     }
   }

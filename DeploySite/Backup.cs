@@ -240,16 +240,26 @@ namespace Softelvdm.Tools.DeploySite {
                 string domainFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain);
                 List<string> products = (from d in Directory.GetDirectories(domainFolder) select Path.GetFileName(d)).ToList();
                 foreach (string product in products) {
-                    string productFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain, product);
-                    if (!packageMap.Contains($"{domain}.{product} ")) {// simple string check (note trailing space)
+                    // some product names could look like this: YetaWF.Forms.MyName (more than 2 segments)
+                    // in which case we only use the last segment as product name
+                    string p = product;
+                    int ix = product.LastIndexOf('.');
+                    if (ix >= 0)
+                        p = product.Substring(ix + 1);
+                    string productFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain, p);
+
+                    Regex rePackage = new Regex($@"^{domain}(\.[^ ]*)*\.{p} ", RegexOptions.Multiline); // (note trailing space)
+                    if (!rePackage.IsMatch(packageMap)) {
                         // some packages use Softelvdm.{product} in package map but are located at YetaWF.{product} so allow for that
-                        if (domain != "YetaWF" || !packageMap.Contains($"Softelvdm.{product} ")) // simple string check (note trailing space)
+                        rePackage = new Regex($@"^Softelvdm(\.[^ ]*)*\.{p} ", RegexOptions.Multiline); // (note trailing space)
+                        if (domain != "YetaWF" || !rePackage.IsMatch(packageMap))
                             Directory.Delete(productFolder, false);// remove symlink
                     }
                 }
             }
             AddAllFilesToTarget(addonsFolder);
         }
+
         private void AddAllFilesToTarget(string folder, List<string> ExcludeFiles = null, List<string> ExcludeFolders = null, bool Optional = false) {
             string absPath = Path.Combine(BackupSiteLocation, folder);
             string relPath = folder;
