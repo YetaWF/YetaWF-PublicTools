@@ -240,21 +240,35 @@ namespace Softelvdm.Tools.DeploySite {
                 string domainFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain);
                 List<string> products = (from d in Directory.GetDirectories(domainFolder) select Path.GetFileName(d)).ToList();
                 foreach (string product in products) {
+
                     // some product names could look like this: YetaWF.Forms.MyName (more than 2 segments)
                     // in which case we only use the last segment as product name
-                    string p = product;
+                    string prodName = product;
                     int ix = product.LastIndexOf('.');
                     if (ix >= 0)
-                        p = product.Substring(ix + 1);
-                    string productFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain, p);
+                        prodName = product.Substring(ix + 1);
+                    string productFolder = Path.Combine(BackupSiteLocation, addonsFolder, domain, prodName);
 
-                    Regex rePackage = new Regex($@"^{domain}(\.[^ ]*)*\.{p} ", RegexOptions.Multiline); // (note trailing space)
-                    if (!rePackage.IsMatch(packageMap)) {
-                        // some packages use Softelvdm.{product} in package map but are located at YetaWF.{product} so allow for that
-                        rePackage = new Regex($@"^Softelvdm(\.[^ ]*)*\.{p} ", RegexOptions.Multiline); // (note trailing space)
-                        if (domain != "YetaWF" || !rePackage.IsMatch(packageMap))
-                            Directory.Delete(productFolder, false);// remove symlink
+                    bool remove = true;
+                    Regex rePackage = new Regex($@"^{domain}(\.[^ ]*)*\.{prodName} ", RegexOptions.Multiline); // (note trailing space)
+                    if (rePackage.IsMatch(packageMap))
+                        remove = false;
+                    if (remove) {
+                        // Special case for SQLDyn (folder is SQLDyn but package is YetaWF.DataProvider.SQL)
+                        if (domain == "YetaWF.DataProvider" && prodName == "SQLDyn") {
+                            rePackage = new Regex($@"^YetaWF(\.[^ ]*)*\.SQL ", RegexOptions.Multiline); // (note trailing space)
+                            if (rePackage.IsMatch(packageMap))
+                                remove = false;
+                        }
                     }
+                    if (remove) {
+                        // some packages use Softelvdm.{product} in package map but are located at YetaWF.{product} so allow for that
+                        rePackage = new Regex($@"^Softelvdm(\.[^ ]*)*\.{prodName} ", RegexOptions.Multiline); // (note trailing space)
+                        if (domain == "YetaWF" && rePackage.IsMatch(packageMap))
+                            remove = false;
+                    }
+                    if (remove)
+                        Directory.Delete(productFolder, false);// remove symlink
                 }
             }
             AddAllFilesToTarget(addonsFolder);
