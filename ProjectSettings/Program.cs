@@ -84,6 +84,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "ModuleDefinition"), Path.Combine(solFolder, "DataProvider", "ModuleDefinition", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "PostgreSQL"), Path.Combine(solFolder, "DataProvider", "PostgreSQL", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQL"), Path.Combine(solFolder, "DataProvider", "SQL", "Addons"));
+                MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQLDyn"), Path.Combine(solFolder, "DataProvider", "SQLDyn", "Addons"));
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQLGeneric"), Path.Combine(solFolder, "DataProvider", "SQLGeneric", "Addons"));
 
                 MakeSymLink(Path.Combine(solFolder, "Website", "Localization"), Path.Combine(solFolder, "Localization"));

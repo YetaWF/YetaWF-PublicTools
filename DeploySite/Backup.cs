@@ -253,14 +253,14 @@ namespace Softelvdm.Tools.DeploySite {
                     Regex rePackage = new Regex($@"^{domain}(\.[^ ]*)*\.{prodName} ", RegexOptions.Multiline); // (note trailing space)
                     if (rePackage.IsMatch(packageMap))
                         remove = false;
-                    if (remove) {
-                        // Special case for SQLDyn (folder is SQLDyn but package is YetaWF.DataProvider.SQL)
-                        if (domain == "YetaWF.DataProvider" && prodName == "SQLDyn") {
-                            rePackage = new Regex($@"^YetaWF(\.[^ ]*)*\.SQL ", RegexOptions.Multiline); // (note trailing space)
-                            if (rePackage.IsMatch(packageMap))
-                                remove = false;
-                        }
-                    }
+                    //if (remove) {
+                    //    // Special case for SQLDyn (folder is SQLDyn but package is YetaWF.DataProvider.SQL)
+                    //    if (domain == "YetaWF.DataProvider" && prodName == "SQLDyn") {
+                    //        rePackage = new Regex($@"^YetaWF(\.[^ ]*)*\.SQL ", RegexOptions.Multiline); // (note trailing space)
+                    //        if (rePackage.IsMatch(packageMap))
+                    //            remove = false;
+                    //    }
+                    //}
                     if (remove) {
                         // some packages use Softelvdm.{product} in package map but are located at YetaWF.{product} so allow for that
                         rePackage = new Regex($@"^Softelvdm(\.[^ ]*)*\.{prodName} ", RegexOptions.Multiline); // (note trailing space)
