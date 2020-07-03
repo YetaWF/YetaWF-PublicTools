@@ -6,48 +6,37 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Softelvdm.Tools.ProjectSettings {
 
     /// <summary>
     /// This is a hacky little program that is typically used during installation of YetaWF to
     /// - create symlinks which are different between Windows and Linux et.al.
-    /// - copy project files which are different between ASP.NET and ASP.NET Core.
+    /// - handle selection of SQL or SQLDyn package. The selection in .csproj doesn't work with docker/dotnet build for nested referenced packages.
     /// </summary>
     /// <remarks>The code could be prettier. This is a dev tool that ended up being needed for installation on linux. Oh well.</remarks>
     class Program {
-        public bool SetMVC5 { get; private set; }
-        public bool SetMVC6 { get; private set; }
-        public bool SaveCurrentAsMVC5 { get; private set; }
-        public bool SaveCurrentAsMVC6 { get; private set; }
+
         public bool Junctions { get; private set; }
-        public bool IsMVC6 { get; private set; }
+        public bool SQL { get; private set; }
+        public bool SQLDyn { get; private set; }
 
         static int Main(string[] args) {
 
             Program pgm = new Program();
 
-            int options = 0;
-
             // Process command line
             int argCount = args.Length;
             if (argCount > 0) {
-                for (int i = 0 ; i < argCount ; ++i) {
+                for (int i = 0; i < argCount; ++i) {
                     string s = args[i];
-                    if (string.Compare(s, "SaveCurrentAsMVC5", true) == 0) {
-                        pgm.SaveCurrentAsMVC5 = true;
-                        options++;
-                    } else  if (string.Compare(s, "SaveCurrentAsMVC6", true) == 0) {
-                        pgm.SaveCurrentAsMVC6 = true;
-                        options++;
-                    } else if (string.Compare(s, "SetMVC6", true) == 0) {
-                        pgm.SetMVC6 = true;
-                        options++;
-                    } else if (string.Compare(s, "SetMVC5", true) == 0) {
-                        pgm.SetMVC5 = true;
-                        options++;
-                    } else if (string.Compare(s, "Symlinks", true) == 0) {
+                    if (string.Compare(s, "Symlinks", true) == 0) {
                         pgm.Junctions = true;
+                    } else if (string.Compare(s, "SQL", true) == 0) {
+                        pgm.SQL = true;
+                    } else if (string.Compare(s, "SQLDyn", true) == 0) {
+                        pgm.SQLDyn = true;
                     } else {
                         Messages.Message(string.Format("Invalid argument {0}", s));
                         return -1;
@@ -56,8 +45,8 @@ namespace Softelvdm.Tools.ProjectSettings {
             }
 
             // Validate conflicting parms
-            if (options > 1 || (options == 0 && !pgm.Junctions)) {
-                Messages.Message("Usage: YetaWF.ProjectSettings.exe {SetMVC5|SetMVC6|SaveCurrentAsMVC5|SaveCurrentAsMVC6|Symlinks} ");
+            if ((!pgm.Junctions && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
+                Messages.Message("Usage: YetaWF.ProjectSettings.exe {Symlinks|SQL|SQLDyn} ");
                 return -1;
             }
 
@@ -69,11 +58,9 @@ namespace Softelvdm.Tools.ProjectSettings {
                 return -1;
             }
 
-            pgm.IsMVC6 = Directory.Exists(Path.Combine(solFolder, "Website", "wwwroot"));
-
             if (pgm.Junctions) {
                 pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "Areas"));
-                pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", pgm.IsMVC6 ? "wwwroot" : "", "Addons"));
+                pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "wwwroot", "Addons"));
                 pgm.ProjectsFolderWebsiteLinks(Path.Combine(solFolder, "Modules"), solFolder);
                 pgm.ProjectsFolderWebsiteLinks(Path.Combine(solFolder, "Skins"), solFolder);
                 pgm.OneProjectFolderWebsiteLinks(Path.Combine(solFolder, "CoreComponents"), solFolder, "YetaWF", "Core", TargetCompany: false);
@@ -90,7 +77,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 MakeSymLink(Path.Combine(solFolder, "Website", "Localization"), Path.Combine(solFolder, "Localization"));
                 MakeSymLink(Path.Combine(solFolder, "CoreComponents", "Core", "node_modules"), Path.Combine(solFolder, "Website", "node_modules"));
             }
-            if (pgm.SetMVC5 || pgm.SetMVC6 || pgm.SaveCurrentAsMVC5 || pgm.SaveCurrentAsMVC6) {// really always
+            if (pgm.SQL || pgm.SQLDyn) {
                 Messages.Message("Website projects...");
                 pgm.VisitFoldersForProjects(Path.Combine(solFolder, "Website"), Recurse: false);
                 Messages.Message("CoreComponents projects...");
@@ -109,6 +96,16 @@ namespace Softelvdm.Tools.ProjectSettings {
                 pgm.VisitFoldersForProjects(Path.Combine(solFolder, "PublicTools"));
             }
             return 0;
+        }
+
+        private string FindSolutionFolder(string dir) {
+            for (; ; ) {
+                List<string> files = Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).ToList();
+                if (files.Count > 0) return dir;
+                dir = Path.GetDirectoryName(dir);
+                if (string.IsNullOrWhiteSpace(dir)) return null;
+            }
+            /* not reached */
         }
 
         private void DeleteAllDirectories(string target) {
@@ -147,10 +144,10 @@ namespace Softelvdm.Tools.ProjectSettings {
                     //List<string> projectsWithNodeNames = new List<string> { "Basics" };
                     //string projName = Path.GetFileName(project);
                     //if (projectsWithNodeNames.Contains(projName)) {
-                        string srcFolder = Path.Combine(project, "node_modules");
-                        string targetFolder = Path.Combine(solFolder, "Website", "node_modules");
-                        MakeSymLink(srcFolder, targetFolder);
-                        Messages.Message($"Symlink from {srcFolder} to {targetFolder}");
+                    string srcFolder = Path.Combine(project, "node_modules");
+                    string targetFolder = Path.Combine(solFolder, "Website", "node_modules");
+                    MakeSymLink(srcFolder, targetFolder);
+                    Messages.Message($"Symlink from {srcFolder} to {targetFolder}");
                     //}
                     OneProjectFolderWebsiteLinks(folder, solFolder, Path.GetFileName(company), project);
                 }
@@ -164,11 +161,11 @@ namespace Softelvdm.Tools.ProjectSettings {
 
             string websiteFolder = Path.Combine(solFolder, "Website");
             // Make a symlink from the Website/Addons/company/project to folder/company/project/Addons
-            string srcFolder = Path.Combine(websiteFolder, IsMVC6 ? "wwwroot" : "", "Addons");
+            string srcFolder = Path.Combine(websiteFolder, "wwwroot", "Addons");
             Directory.CreateDirectory(srcFolder);
-            srcFolder = Path.Combine(websiteFolder, IsMVC6 ? "wwwroot" : "", "Addons", companyName);
+            srcFolder = Path.Combine(websiteFolder, "wwwroot", "Addons", companyName);
             Directory.CreateDirectory(srcFolder);
-            srcFolder = Path.Combine(websiteFolder, IsMVC6 ? "wwwroot" : "", "Addons", companyName, projName);
+            srcFolder = Path.Combine(websiteFolder, "wwwroot", "Addons", companyName, projName);
             string targetFolder = Path.Combine(folder, targetCompanyName, projName, "Addons");
             MakeSymLink(srcFolder, targetFolder);
         }
@@ -185,7 +182,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 Junction.Create(srcFolder, targetFolder, true);
             } else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 // There is no API in .NET Core to do this. Tsk, tsk.
-                RunCommand("ln" , $"-f -s \"{targetFolder}\" \"{srcFolder}\"");
+                RunCommand("ln", $"-f -s \"{targetFolder}\" \"{srcFolder}\"");
                 if (!Directory.Exists(srcFolder))
                     throw new ApplicationException($"Unable to create symlink from {srcFolder} to {targetFolder}");
             } else {
@@ -218,22 +215,15 @@ namespace Softelvdm.Tools.ProjectSettings {
                 throw new ApplicationException($"{cmd} {args} failed - {p.ExitCode}");
         }
 
-        private List<string> ProjectPatterns = new List<string> { "*.csproj", "packages.config", "app.config" };
+        private List<string> ProjectPatterns = new List<string> { "*.csproj" };
 
-        private List<string> GetProjectFiles(string folder, string append = null) {
+        private List<string> GetProjectFiles(string folder) {
             List<string> files = new List<string>();
             foreach (string pattern in ProjectPatterns) {
-                List<string> match = Directory.GetFiles(folder, pattern + append ?? "").ToList();
+                List<string> match = Directory.GetFiles(folder, pattern).ToList();
                 files.AddRange(match);
             }
             return files;
-        }
-        private void DeleteProjectFiles(string folder) {
-            foreach (string pattern in ProjectPatterns) {
-                List<string> files = Directory.GetFiles(folder, pattern).ToList();
-                foreach (string file in files)
-                    File.Delete(file);
-            }
         }
 
         private void VisitFoldersForProjects(string folder, bool Recurse = true) {
@@ -245,35 +235,13 @@ namespace Softelvdm.Tools.ProjectSettings {
                 return;
             if (folderEnd == "addons")
                 return;
-            if (SetMVC5) {
-                List<string> files = GetProjectFiles(folder, "_MVC5");
-                if (files.Count > 0)
-                    DeleteProjectFiles(folder);
-                foreach (string f in files)
-                    CopyFile(f, f.Substring(0, f.Length-"_MVC5".Length));
-                if (files.Count > 0)
-                    return;// no need to search subfolders
-            } else if (SetMVC6) {
-                List<string> files = GetProjectFiles(folder, "_MVC6");
-                if (files.Count > 0)
-                    DeleteProjectFiles(folder);
-                foreach (string f in files)
-                    CopyFile(f, f.Substring(0, f.Length-"_MVC6".Length));
-                if (files.Count > 0)
-                    return;// no need to search subfolders
-            } else if (SaveCurrentAsMVC5) {
-                List<string> files = GetProjectFiles(folder);
-                foreach (string f in files)
-                    CopyFile(f, f + "_MVC5");
-                if (files.Count > 0)
-                    return;// no need to search subfolders
-            } else if (SaveCurrentAsMVC6) {
-                List<string> files = GetProjectFiles(folder);
-                foreach (string f in files)
-                    CopyFile(f, f + "_MVC6");
-                if (files.Count > 0)
-                    return;// no need to search subfolders
-            }
+
+            List<string> files = GetProjectFiles(folder);
+            foreach (string f in files)
+                FixProject(f);
+            if (files.Count > 0)
+                return;// no need to search subfolders
+
             if (Recurse) {
                 List<string> dirs = Directory.GetDirectories(folder).ToList();
                 foreach (string d in dirs)
@@ -281,25 +249,28 @@ namespace Softelvdm.Tools.ProjectSettings {
             }
         }
 
-        private void CopyFile(string oldName, string newName) {
-            if (File.Exists(oldName))
-                File.Copy(oldName, newName, true);
+        private void FixProject(string project) {
+            string projText = File.ReadAllText(project);
+            string newText;
+            if (SQLDyn)
+                newText = reCsProj.Replace(projText, @"<ItemGroup><ProjectReference Include=""$1""/></ItemGroup>");
+            else
+                newText = reCsProj.Replace(projText, @"<ItemGroup><ProjectReference Include=""$2""/></ItemGroup>");
+            if (newText != projText)
+                File.WriteAllText(project, newText);
         }
-        private void MoveFile(string oldName, string newName) {
-            if (File.Exists(oldName)) {
-                if (File.Exists(newName))
-                    File.Delete(newName);
-                File.Move(oldName, newName);
-            }
-        }
-        private string FindSolutionFolder(string dir) {
-            for ( ; ; ) {
-                List<string> files = Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).ToList();
-                if (files.Count > 0) return dir;
-                dir = Path.GetDirectoryName(dir);
-                if (string.IsNullOrWhiteSpace(dir)) return null;
-            }
-            /* not reached */
-        }
+
+        private const string reg =
+@"<Choose>\s*" +
+  @"<When Condition=""Exists\('\$\(SolutionDir\)USE_SQLDYN.txt'\)"">\s*" +
+    @"<ItemGroup>\s*<ProjectReference Include=""([^""].*?)""\s*\/>\s*</ItemGroup>\s*" +
+  @"</When>\s*" +
+  @"<Otherwise>\s*" +
+    @"<ItemGroup>\s*<ProjectReference Include=""([^""].*?)""\s*\/>\s*</ItemGroup>\s*" +
+  @"</Otherwise>\s*" +
+@"</Choose>";
+
+        private Regex reCsProj = new Regex(reg, RegexOptions.Singleline | RegexOptions.Compiled);
+
     }
 }
