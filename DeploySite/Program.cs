@@ -169,10 +169,10 @@ namespace Softelvdm.Tools.DeploySite {
         public static string ReplaceBlueGreen(string content) {
             if (BlueGreenDeploy != BlueGreenDeployEnum.None) {
                 content = content.Replace("{bluegreen}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "blue" : "green");
-                content = content.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Blue" : "Green");
-                content = content.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Blue" : "-Green");
-                content = content.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "Green" : "Blue");
-                content = content.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-Green" : "-Blue");
+                content = content.Replace("{BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "BLUE" : "GREEN");
+                content = content.Replace("{-BLUEGREEN}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-BLUE" : "-GREEN");
+                content = content.Replace("{BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "GREEN" : "BLUE");
+                content = content.Replace("{-BLUEGREEN-OTHER}", BlueGreenDeploy == BlueGreenDeployEnum.Blue ? "-GREEN" : "-BLUE");
             } else {
                 if (content.Contains("{bluegreen}") || content.Contains("{BLUEGREEN}") || content.Contains("{-BLUEGREEN}") || content.Contains("{BLUEGREEN-OTHER}") || content.Contains("{-BLUEGREEN-OTHER}"))
                     throw new Error("BLUEGREEN variable found but this is not a Blue-Green deploy");
