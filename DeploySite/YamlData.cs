@@ -7,22 +7,23 @@ namespace Softelvdm.Tools.DeploySite {
 
     public class YamlData {
         public List<Database> Databases { get; set; }
+        public List<FTP> FTPs { get; set; }
         [Required]
         public Deploy Deploy { get; set; }
-        public FTP FTP { get; set; }
         public Local Local { get; set; }
         public Site Site { get; set; }
+        public List<FTPCopy> FTPCopy { get; set; }
     }
 
     public class Database {
-        [Required]
+
+        public string Bacpac { get; set; }
+
         public string DevDB { get; set; }
-        [Required]
         public string DevServer { get; set; }
-        [Required]
         public string DevUsername { get; set; }
-        [Required]
         public string DevPassword { get; set; }
+
         [Required]
         public string ProdDB { get; set; }
         [Required]
@@ -57,8 +58,6 @@ namespace Softelvdm.Tools.DeploySite {
         public string User { get; set; }
         [Required]
         public string Password { get; set; }
-        [Required]
-        public List<FTPCopy> Copy { get; set; }
     }
     public class FTPCopy {
         [Required]

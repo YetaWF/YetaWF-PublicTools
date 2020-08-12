@@ -110,7 +110,11 @@ namespace Softelvdm.Tools.DeploySite {
         private void RestoreDBs() {
             if (Program.YamlData.Databases != null) {
                 foreach (Database db in Program.YamlData.Databases) {
-                    RestoreDB(db);
+                    if (!string.IsNullOrWhiteSpace(db.Bacpac)) {
+                        //$$$$
+                    } else {
+                        RestoreDB(db);
+                    }
                 }
             }
         }

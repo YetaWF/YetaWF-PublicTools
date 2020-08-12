@@ -11,18 +11,21 @@ namespace Softelvdm.Tools.DeploySite {
     public partial class Backup {
 
         private void UploadAll() {
-            if (Program.YamlData.FTP != null) {
-                Console.WriteLine($"Uploading to {Program.YamlData.FTP.Server} ...");
+            if (Program.YamlData.FTPs != null) {
+                foreach (FTP ftp in Program.YamlData.FTPs) {
 
-                NetworkCredential creds = new NetworkCredential(Program.YamlData.FTP.User, Program.YamlData.FTP.Password);
-                using (FtpClient ftpClient = new FtpClient(Program.YamlData.FTP.Server, Program.YamlData.FTP.Port, creds)) {
-                    FtpProfile ftpProf = ftpClient.AutoConnect();
-                    if (ftpProf == null)
-                        throw new Error($"Can't connect to FTP server {Program.YamlData.FTP.Server}");
+                    Console.WriteLine($"Uploading to {ftp.Server} ...");
 
-                    foreach (FTPCopy copy in Program.YamlData.FTP.Copy) {
-                        string from = Path.Combine(Program.YamlData.Deploy.BaseFolder, copy.From);
-                        Upload(ftpClient, from, copy.To, ReplaceBG: copy.ReplaceBG, Conditional: copy.Conditional);
+                    NetworkCredential creds = new NetworkCredential(ftp.User, ftp.Password);
+                    using (FtpClient ftpClient = new FtpClient(ftp.Server, ftp.Port, creds)) {
+                        FtpProfile ftpProf = ftpClient.AutoConnect();
+                        if (ftpProf == null)
+                            throw new Error($"Can't connect to FTP server {ftp.Server}");
+
+                        foreach (FTPCopy copy in Program.YamlData.FTPCopy) {
+                            string from = Path.Combine(Program.YamlData.Deploy.BaseFolder, copy.From);
+                            Upload(ftpClient, from, copy.To, ReplaceBG: copy.ReplaceBG, Conditional: copy.Conditional);
+                        }
                     }
                 }
             }

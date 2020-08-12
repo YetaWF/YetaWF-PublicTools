@@ -90,9 +90,30 @@ namespace Softelvdm.Tools.DeploySite {
         private void BackupDBs() {
             if (Program.YamlData.Databases != null) {
                 foreach (Database db in Program.YamlData.Databases) {
-                    BackupDB(db);
+                    if (!string.IsNullOrWhiteSpace(db.Bacpac)) {
+                        if (db.DevDB != null || db.DevServer != null || db.DevUsername != null || db.DevPassword != null)
+                            throw new Error($"Can't mix bacpac and development DB information ({db.Bacpac})");
+                        CopyBacpac(db.Bacpac);
+                    } else {
+                        if (db.DevDB == null || db.DevServer == null || db.DevUsername == null || db.DevPassword == null)
+                            throw new Error($"Missing development DB information ({db.DevDB})");
+                        BackupDB(db);
+                    }
                 }
             }
+        }
+
+        private void CopyBacpac(string bacpac) {
+
+            Console.WriteLine($"Copying {bacpac} to {Program.DBFOLDER} folder");
+
+            string bacpacFile = Path.Combine(Program.YamlData.Deploy.BaseFolder, bacpac);
+
+            string dbFileName = Path.Combine(BackupTempFolder, Program.DBFOLDER, bacpac);
+            string path = Path.GetDirectoryName(dbFileName);
+            Directory.CreateDirectory(path);
+
+            File.Copy(bacpacFile, dbFileName);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "None")]
