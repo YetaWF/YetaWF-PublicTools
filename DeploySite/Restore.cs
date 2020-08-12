@@ -24,6 +24,7 @@ namespace Softelvdm.Tools.DeploySite {
         public const string OFFLINE = "Offline For Maintenance.html";
 
         private string RestoreTargetSite;
+        private Variables Variables = new Variables();
 
         private bool IsMVC6 { get; set; }
 
@@ -35,6 +36,26 @@ namespace Softelvdm.Tools.DeploySite {
                 throw new Error($"Invalid deploy type {Program.YamlData.Deploy.Type} - only zip deploys can be restored");
             if (Program.YamlData.Site == null)
                 throw new Error($"No Site information provided in yaml file");
+
+            if (Program.YamlData.Site.Include != null) {
+                Variables = Variables.LoadVariables(Path.Combine(".", Program.YamlData.Site.Include));
+                // perform variable substitution
+                foreach (Database db in Program.YamlData.Databases) {
+                    db.ProdServer = db.ProdServer.Replace("[Var,SQLServer]", Variables.SQLServer);
+                    db.ProdUsername = db.ProdUsername.Replace("[Var,SQLUser]", Variables.SQLUser);
+                    db.ProdPassword = db.ProdPassword.Replace("[Var,SQLPassword]", Variables.SQLPassword);
+                }
+                foreach (RunCommand run in Program.YamlData.Site.RunFirst) {
+                    run.Command = run.Command.Replace("[Var,SQLServer]", Variables.SQLServer);
+                    run.Command = run.Command.Replace("[Var,SQLUser]", Variables.SQLUser);
+                    run.Command = run.Command.Replace("[Var,SQLPassword]", Variables.SQLPassword);
+                }
+                foreach (RunCommand run in Program.YamlData.Site.Run) {
+                    run.Command = run.Command.Replace("[Var,SQLServer]", Variables.SQLServer);
+                    run.Command = run.Command.Replace("[Var,SQLUser]", Variables.SQLUser);
+                    run.Command = run.Command.Replace("[Var,SQLPassword]", Variables.SQLPassword);
+                }
+            }
 
             RestoreTargetSite = Program.YamlData.Site.Location;
 
@@ -111,12 +132,34 @@ namespace Softelvdm.Tools.DeploySite {
             if (Program.YamlData.Databases != null) {
                 foreach (Database db in Program.YamlData.Databases) {
                     if (!string.IsNullOrWhiteSpace(db.Bacpac)) {
-                        //$$$$
+                        if (db.DevDB != null || db.DevServer != null || db.DevUsername != null || db.DevPassword != null)
+                            throw new Error($"Can't mix bacpac and development DB information ({db.Bacpac})");
+                        if (Program.YamlData.Site.Sqlcmd == null)
+                            throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
+                        if (Program.YamlData.Site.Sqlpackage == null)
+                            throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
+                        RestoreBacpac(db);
                     } else {
                         RestoreDB(db);
                     }
                 }
             }
+        }
+
+        private void RestoreBacpac(Database db) {
+            string bacpacFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, db.Bacpac);
+
+            // Drop database
+            string args = $@"-b -m-1 -V11 -S ""{db.ProdServer}"" -U ""{db.ProdUsername}"" -P ""{db.ProdPassword}"" -Q ""DROP DATABASE [{db.ProdDB}]"" ";
+            RunCommand(Program.YamlData.Site.Sqlcmd, args, IgnoreErrors: true);
+
+            // Create database
+            args = $@"-b -m-1 -V11 -S ""{db.ProdServer}"" -U ""{db.ProdUsername}"" -P ""{db.ProdPassword}"" -Q ""CREATE DATABASE [{db.ProdDB}]""";
+            RunCommand(Program.YamlData.Site.Sqlcmd, args);
+
+            // Import database
+            args = $@"/tsn:""{db.ProdServer}"" /tdn:""{db.ProdDB}"" /a:Import /tu:""{db.ProdUsername}"" /tp:""{db.ProdPassword}"" /sf:""{bacpacFileName}""";
+            RunCommand(Program.YamlData.Site.Sqlpackage, args);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "None")]
@@ -348,33 +391,45 @@ namespace Softelvdm.Tools.DeploySite {
         }
 
         private void RunCommand(RunCommand command) {
+            RunCommand("cmd.exe", $"/C {command.Command}", command.IgnoreErrors);
+        }
+
+        private void RunCommand(string command, string args, bool IgnoreErrors = false) {
             Process p = new Process();
 
-            Console.WriteLine($"Running {command.Command}");
+            Console.WriteLine($"Running {command} {args}");
 
-            p.StartInfo.FileName = "cmd.exe";
-            p.StartInfo.Arguments = "/C " + command.Command;
+            p.StartInfo.FileName = command;
+            p.StartInfo.Arguments = args;
 
             p.StartInfo.CreateNoWindow = true;
             p.EnableRaisingEvents = true;
 
             p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
             p.StartInfo.UseShellExecute = false;
             p.OutputDataReceived += new DataReceivedEventHandler(process_OutputDataReceived);
+            p.ErrorDataReceived += new DataReceivedEventHandler(process_ErrorDataReceived);
             p.Exited += new EventHandler(process_Exited);
 
             if (p.Start()) {
                 p.BeginOutputReadLine();
                 p.WaitForExit();
             } else {
-                throw new Error(string.Format($"Failed to start {command.Command}"));
+                throw new Error($"Failed to start {command}");
             }
 
             if (p.ExitCode != 0) {
-                if (!command.IgnoreErrors)
-                    throw new Error(string.Format($"{command.Command} failed"));
+                if (!IgnoreErrors)
+                    throw new Error($"{command} failed (ExitCode = {p.ExitCode})");
             }
+            Console.WriteLine($"Completion exit code {p.ExitCode}");
         }
+
+        private void process_ErrorDataReceived(object sender, DataReceivedEventArgs e) {
+            Console.WriteLine(e.Data);
+        }
+
         private void process_Exited(object sender, EventArgs e) {
             Console.WriteLine("\r\nDone\r\n");
         }

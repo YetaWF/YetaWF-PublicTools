@@ -93,6 +93,10 @@ namespace Softelvdm.Tools.DeploySite {
                     if (!string.IsNullOrWhiteSpace(db.Bacpac)) {
                         if (db.DevDB != null || db.DevServer != null || db.DevUsername != null || db.DevPassword != null)
                             throw new Error($"Can't mix bacpac and development DB information ({db.Bacpac})");
+                        if (Program.YamlData.Site.Sqlcmd == null)
+                            throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
+                        if (Program.YamlData.Site.Sqlpackage == null)
+                            throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
                         CopyBacpac(db.Bacpac);
                     } else {
                         if (db.DevDB == null || db.DevServer == null || db.DevUsername == null || db.DevPassword == null)

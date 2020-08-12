@@ -2,7 +2,7 @@
   "profiles": {
     "CopySite": {
       "commandName": "Project",
-      "commandLineArgs": "Backup \"C:\\Development\\SquareTreePNC\\DeploySite.Single.yaml\"",
+      "commandLineArgs": "Restore \"C:\\Development\\Formulaws\\DeploySite.TCWindows.yaml\"",
       "workingDirectory": "\\Development\\SquareTreePNC"
     }
   }

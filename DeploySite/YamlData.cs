@@ -82,10 +82,14 @@ namespace Softelvdm.Tools.DeploySite {
     }
 
     public class Site {
+        public string Include { get; set; }
         [Required]
         public string Location { get; set; }
         [Required]
         public string Zip { get; set; }
+
+        public string Sqlcmd { get; set; }
+        public string Sqlpackage { get; set; }
 
         public bool Maintenance { get; set; }
 
