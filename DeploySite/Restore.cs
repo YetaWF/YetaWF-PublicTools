@@ -49,11 +49,13 @@ namespace Softelvdm.Tools.DeploySite {
                     run.Command = run.Command.Replace("[Var,SQLServer]", Variables.SQLServer);
                     run.Command = run.Command.Replace("[Var,SQLUser]", Variables.SQLUser);
                     run.Command = run.Command.Replace("[Var,SQLPassword]", Variables.SQLPassword);
+                    run.Command = run.Command.Replace("[Var,Preload]", Variables.Preload);
                 }
                 foreach (RunCommand run in Program.YamlData.Site.Run) {
                     run.Command = run.Command.Replace("[Var,SQLServer]", Variables.SQLServer);
                     run.Command = run.Command.Replace("[Var,SQLUser]", Variables.SQLUser);
                     run.Command = run.Command.Replace("[Var,SQLPassword]", Variables.SQLPassword);
+                    run.Command = run.Command.Replace("[Var,Preload]", Variables.Preload);
                 }
             }
 

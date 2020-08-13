@@ -14,6 +14,7 @@ namespace Softelvdm.Tools.DeploySite {
         public string SQLServer { get; set; }
         public string SQLUser { get; set; }
         public string SQLPassword { get; set; }
+        public string Preload { get; set; }
 
         public static Variables LoadVariables(string fileName) {
             if (!File.Exists(fileName))
