@@ -145,9 +145,9 @@ namespace Softelvdm.Tools.DeploySite {
                     throw;
                 }
 
-                Regex reBlue = new Regex(yamlData.Deploy.BlueRegex);
+                Regex reBlue = new Regex(yamlData.Deploy.BlueRegex, RegexOptions.IgnoreCase);
                 bool blue = reBlue.IsMatch(data);
-                Regex reGreen = new Regex(yamlData.Deploy.GreenRegex);
+                Regex reGreen = new Regex(yamlData.Deploy.GreenRegex, RegexOptions.IgnoreCase);
                 bool green = reGreen.IsMatch(data);
 
                 BlueGreenDeployEnum newDeploy;
