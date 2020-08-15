@@ -262,7 +262,7 @@ namespace Softelvdm.Tools.ProjectSettings {
 
         private const string reg =
 @"<Choose>\s*" +
-  @"<When Condition=""Exists\('\$\(SolutionDir\)USE_SQLDYN.txt'\)"">\s*" +
+  @"<When Condition=""Exists\('[^""]*USE_SQLDYN.txt'\)"">\s*" +
     @"<ItemGroup>\s*<ProjectReference Include=""([^""].*?)""\s*\/>\s*</ItemGroup>\s*" +
   @"</When>\s*" +
   @"<Otherwise>\s*" +
