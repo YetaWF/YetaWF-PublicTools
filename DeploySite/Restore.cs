@@ -154,6 +154,8 @@ namespace Softelvdm.Tools.DeploySite {
 
         private void RestoreBacpac(Database db) {
 
+            KillSQLConnections(db);
+
             Console.WriteLine("Restoring bacpac DB {0}", db.ProdDB);
 
             string bacpacFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, db.Bacpac);
@@ -245,9 +247,9 @@ EXEC(@kill);";
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "None")]
         private void RestoreDB(Database db, string bakFile) {
 
-            Console.WriteLine("Restoring DB {0}", db.ProdDB);
-
             KillSQLConnections(db);
+
+            Console.WriteLine("Restoring DB {0}", db.ProdDB);
 
             string dbFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, bakFile);
 
