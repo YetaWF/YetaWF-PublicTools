@@ -98,6 +98,10 @@ namespace Softelvdm.Tools.DeploySite {
                         if (Program.YamlData.Site.Sqlpackage == null)
                             throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
                         CopyBacpac(db.Bacpac);
+                    } else if (!string.IsNullOrWhiteSpace(db.ubackup)) {
+                        if (db.DevDB != null || db.DevServer != null || db.DevUsername != null || db.DevPassword != null)
+                            throw new Error($"Can't mix ubackup and development DB information ({db.ubackup})");
+                        // nothing to copy
                     } else {
                         if (db.DevDB == null || db.DevServer == null || db.DevUsername == null || db.DevPassword == null)
                             throw new Error($"Missing development DB information ({db.DevDB})");

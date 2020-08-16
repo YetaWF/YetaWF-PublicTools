@@ -18,6 +18,7 @@ namespace Softelvdm.Tools.DeploySite {
     public class Database {
 
         public string Bacpac { get; set; }
+        public string ubackup { get; set; }
 
         public string DevDB { get; set; }
         public string DevServer { get; set; }

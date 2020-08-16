@@ -141,14 +141,21 @@ namespace Softelvdm.Tools.DeploySite {
                         if (Program.YamlData.Site.Sqlpackage == null)
                             throw new Error($"Site.Sqlpackage in yaml file required for bacpac support");
                         RestoreBacpac(db);
+                    } else if (!string.IsNullOrWhiteSpace(db.ubackup)) {
+                        if (db.DevDB != null || db.DevServer != null || db.DevUsername != null || db.DevPassword != null)
+                            throw new Error($"Can't mix ubackup and development DB information ({db.ubackup})");
+                        RestoreUbackup(db);
                     } else {
-                        RestoreDB(db);
+                        RestoreDB(db, $"{db.DevDB}.bak");
                     }
                 }
             }
         }
 
         private void RestoreBacpac(Database db) {
+
+            Console.WriteLine("Restoring bacpac DB {0}", db.ProdDB);
+
             string bacpacFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, db.Bacpac);
 
             // Drop database
@@ -164,12 +171,85 @@ namespace Softelvdm.Tools.DeploySite {
             RunCommand(Program.YamlData.Site.Sqlpackage, args);
         }
 
+        private void RestoreUbackup(Database db) {
+
+            Console.WriteLine("Restoring ubackup DB {0}", db.ProdDB);
+
+            if (!Variables.ubackupRestore) {
+                Console.WriteLine($"Database {db.ProdDB} not restored - ubackup support not enabled");
+                return;
+            }
+            // Find latest DB backup
+            string dbZip = FindUbackupZip(db);
+            // Unzip
+            string dbBak = UnzipUbackup(dbZip);
+            // Restore
+            RestoreDB(db, dbBak);
+        }
+
+        private string FindUbackupZip(Database db) {
+            List<string> files = Directory.GetFiles(Path.GetDirectoryName(db.ubackup), Path.GetFileName(db.ubackup)).ToList();
+            string file = (from f in files orderby f select f).LastOrDefault();
+            if (file == null)
+                throw new Error($"No matching database found for {db.ubackup}");
+            Console.WriteLine($"Found zip file {file} for {db.ProdDB}");
+            return file;
+        }
+
+        private string UnzipUbackup(string dbZip) {
+
+            string dbFolder = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER);
+
+            Console.WriteLine("Extracting Zip file...");
+
+            Directory.CreateDirectory(dbFolder);
+
+            FastZip zipFile = new FastZip();
+            zipFile.ExtractZip(dbZip, dbFolder, null);
+
+            string bakFile = Path.Combine(dbFolder, Path.ChangeExtension(Path.GetFileName(dbZip), ".bak"));
+            if (!File.Exists(bakFile))
+                throw new Error($"Expected file {bakFile} not found");
+
+            Console.WriteLine($"Found bak file {bakFile}");
+            return bakFile;
+        }
+
+        private void KillSQLConnections(Database db) {
+            // https://stackoverflow.com/questions/7197574/script-to-kill-all-connections-to-a-database-more-than-restricted-user-rollback
+
+            Console.WriteLine($"Closing existing connections to {db.ProdDB}");
+
+            string connectionString = String.Format("Data Source={0};User ID={1};Password={2};", db.ProdServer, db.ProdUsername, db.ProdPassword);
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString)) {
+
+                sqlConnection.Open();
+
+                string sqlKill = $@"
+USE [master];
+
+DECLARE @kill varchar(8000) = '';  
+SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), session_id) + ';'
+FROM sys.dm_exec_sessions
+WHERE database_id  = db_id('{db.ProdDB}')
+
+EXEC(@kill);";
+
+                using (SqlCommand cmd = new SqlCommand(sqlKill, sqlConnection)) {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "None")]
-        private void RestoreDB(Database db) {
+        private void RestoreDB(Database db, string bakFile) {
 
             Console.WriteLine("Restoring DB {0}", db.ProdDB);
 
-            string dbFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, $"{db.DevDB}.bak");
+            KillSQLConnections(db);
+
+            string dbFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, bakFile);
 
             // Connection
             string connectionString = String.Format("Data Source={0};User ID={1};Password={2};", db.ProdServer, db.ProdUsername, db.ProdPassword);
