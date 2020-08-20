@@ -212,7 +212,9 @@ namespace Softelvdm.Tools.DeploySite {
             string bakFile = Path.Combine(dbFolder, Path.ChangeExtension(Path.GetFileName(dbZip), ".bak"));
             if (!File.Exists(bakFile))
                 throw new Error($"Expected file {bakFile} not found");
+            Console.WriteLine($"Existing bak file used: {bakFile}");
 
+            bakFile = Path.GetFileName(bakFile);
             Console.WriteLine($"Found bak file {bakFile}");
             return bakFile;
         }
