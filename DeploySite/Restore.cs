@@ -251,7 +251,7 @@ EXEC(@kill);";
 
             KillSQLConnections(db);
 
-            Console.WriteLine("Restoring DB {0}", db.ProdDB);
+            Console.WriteLine($"Restoring DB {db.ProdDB}");
 
             string dbFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, bakFile);
 
@@ -266,7 +266,11 @@ EXEC(@kill);";
                 List<string> LogFiles = new List<string>();
 
                 string SQLFileList = $"RESTORE FILELISTONLY FROM DISK = '{dbFileName}'";
+
+                Console.WriteLine($"Restoring DB {db.ProdDB} - {SQLFileList}");
+
                 using (SqlCommand cmd = new SqlCommand(SQLFileList, sqlConnection)) {
+                    cmd.CommandTimeout = 30 * 60;// 1/2 hour for restores
                     using (SqlDataReader rdr = cmd.ExecuteReader()) {
                         while (rdr.Read()) {
                             string logicalName = rdr.GetString(0);
@@ -304,6 +308,7 @@ EXEC(@kill);";
                 }
 
                 using (SqlCommand cmd = new SqlCommand(sb.ToString(), sqlConnection)) {
+                    Console.WriteLine($"Restoring DB - {sb.ToString()}");
                     cmd.CommandTimeout = 30 * 60;// 1/2 hour for restores
                     cmd.ExecuteNonQuery();
                 }
