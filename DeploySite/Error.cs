@@ -14,5 +14,28 @@ namespace Softelvdm.Tools.DeploySite {
             Console.WriteLine(message);
             throw new ApplicationException(message);
         }
+
+        public static string FormatExceptionMessage(Exception exc) {
+            if (exc == null) return "";
+            string message = "(none)";
+            if (exc.Message != null && !string.IsNullOrWhiteSpace(exc.Message))
+                message = exc.Message;
+            if (exc is AggregateException) {
+                AggregateException aggrExc = (AggregateException)exc;
+                foreach (Exception innerExc in aggrExc.InnerExceptions) {
+                    string s = FormatExceptionMessage(innerExc);
+                    if (s != null)
+                        message += " - " + s;
+                }
+            } else {
+                while (exc.InnerException != null) {
+                    exc = exc.InnerException;
+                    string s = FormatExceptionMessage(exc);
+                    if (s != null)
+                        message += " - " + s;
+                }
+            }
+            return message;
+        }
     }
 }

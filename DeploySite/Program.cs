@@ -91,10 +91,8 @@ namespace Softelvdm.Tools.DeploySite {
                         yamlData = deserializer.Deserialize<YamlData>(YamlRawContent);
                     } catch (Exception exc) {
                         Console.WriteLine($"Input file {input} is invalid");
-                        while (exc != null) {
-                            Console.WriteLine(exc.Message);
-                            exc = exc.InnerException;
-                        }
+                        string msg = Error.FormatExceptionMessage(exc);
+                        Console.WriteLine(msg);
                         throw;
                     }
                     // note that yamlData still has Blue/Green variables
@@ -117,19 +115,23 @@ namespace Softelvdm.Tools.DeploySite {
                 YamlData = deserializer.Deserialize<YamlData>(content);
             } catch (Exception exc) {
                 Console.WriteLine($"Input file {input} is invalid");
-                while (exc != null) {
-                    Console.WriteLine(exc.Message);
-                    exc = exc.InnerException;
-                }
+                string msg = Error.FormatExceptionMessage(exc);
+                Console.WriteLine(msg);
                 throw;
             }
 
-            if (action == CopyAction.Backup) {
-                Backup backup = new Backup();
-                backup.PerformBackup();
-            } else {
-                Restore restore = new Restore();
-                restore.PerformRestore();
+            try {
+                if (action == CopyAction.Backup) {
+                    Backup backup = new Backup();
+                    backup.PerformBackup();
+                } else {
+                    Restore restore = new Restore();
+                    restore.PerformRestore();
+                }
+            } catch (Exception exc) {
+                string msg = Error.FormatExceptionMessage(exc);
+                Console.WriteLine(msg);
+                throw;
             }
 
             return 0;
