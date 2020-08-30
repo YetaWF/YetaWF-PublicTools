@@ -304,6 +304,7 @@ EXEC(@kill);";
                 }
 
                 using (SqlCommand cmd = new SqlCommand(sb.ToString(), sqlConnection)) {
+                    cmd.CommandTimeout = 30 * 60;// 1/2 hour for restores
                     cmd.ExecuteNonQuery();
                 }
             }
