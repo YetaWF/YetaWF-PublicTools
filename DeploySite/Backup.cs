@@ -342,7 +342,7 @@ namespace Softelvdm.Tools.DeploySite {
 
                     // Check for minimal length (most files should be > 0 (or > 3 Unicode)
                     long length = new System.IO.FileInfo(file).Length;
-                    if (length <= 3) {
+                    if (length <= 3 && !file.Contains("node_modules\\") && !file.Contains("node_modules/")) {
                         if ((file.EndsWith(".ts") && !file.EndsWith(".d.ts")) || file.EndsWith(".css") || file.EndsWith(".js"))
                             throw new Error($"File {file} is empty");
                     }
