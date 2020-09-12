@@ -8,11 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-#if MVC6
 using Microsoft.Data.SqlClient;
-#else
-using System.Data.SqlClient;
-#endif
 
 namespace Softelvdm.Tools.DeploySite {
 

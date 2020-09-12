@@ -5,11 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-#if MVC6
 using Microsoft.Data.SqlClient;
-#else
-using System.Data.SqlClient;
-#endif
 
 namespace Softelvdm.Tools.DeploySite {
 
@@ -171,6 +167,7 @@ namespace Softelvdm.Tools.DeploySite {
                 }
 
                 AddPublishOutput();
+                AddFileToTarget("Microsoft.Data.SqlClient.SNI.pdb");// dumb, https://github.com/dotnet/SqlClient/issues/385
                 AddPublishOutputFiles("*.deps.json");
                 AddPublishOutputFiles("*.runtimeconfig.json");
                 AddPublishOutputFiles("*.dll.config");
