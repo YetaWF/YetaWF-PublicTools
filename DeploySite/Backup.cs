@@ -167,7 +167,7 @@ namespace Softelvdm.Tools.DeploySite {
                 }
 
                 AddPublishOutput();
-                AddFileToTarget("Microsoft.Data.SqlClient.SNI.pdb");// dumb, https://github.com/dotnet/SqlClient/issues/385
+                AddPublishOutputFiles("Microsoft.Data.SqlClient.SNI.pdb");// dumb, https://github.com/dotnet/SqlClient/issues/385
                 AddPublishOutputFiles("*.deps.json");
                 AddPublishOutputFiles("*.runtimeconfig.json");
                 AddPublishOutputFiles("*.dll.config");
