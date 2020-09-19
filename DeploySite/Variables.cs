@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿/* Copyright © 2020 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+
+using Newtonsoft.Json;
 using System.IO;
 
 namespace Softelvdm.Tools.DeploySite {
