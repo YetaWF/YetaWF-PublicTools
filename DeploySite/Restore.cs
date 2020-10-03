@@ -300,6 +300,7 @@ EXEC(@kill);";
             AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
             AddAllFilesToSite(Path.Combine("wwwroot", Program.MAINTENANCEFOLDER));
             AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
+            AddAllFilesToSite(Path.Combine("wwwroot", ".well-known"), Optional: true);
             //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
             AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
             AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
