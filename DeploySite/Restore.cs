@@ -22,8 +22,6 @@ namespace Softelvdm.Tools.DeploySite {
         private string RestoreTargetSite;
         private Variables Variables = new Variables();
 
-        private bool IsMVC6 { get; set; }
-
         public Restore() { }
 
         public void PerformRestore() {
@@ -59,12 +57,7 @@ namespace Softelvdm.Tools.DeploySite {
 
             ExtractAllFiles();
 
-            if (Directory.Exists(Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.MARKERMVC6)))
-                IsMVC6 = true;
-            if (IsMVC6)
-                Console.WriteLine("ASP.NET Core Site");
-            else
-                Console.WriteLine("ASP.NET 4 Site");
+            Console.WriteLine("ASP.NET Core Site");
 
             SetMaintenanceMode();
 
@@ -85,13 +78,8 @@ namespace Softelvdm.Tools.DeploySite {
         private void SetMaintenanceMode() {
             if (Program.YamlData.Site.Maintenance) {
                 string maintSrcFile, maintTargetFile;
-                if (IsMVC6) {
-                    maintSrcFile = Path.Combine(RestoreTargetSite, UNZIPFOLDER, "wwwroot", Program.MAINTENANCEFOLDER, OFFLINE);
-                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
-                } else {
-                    maintSrcFile = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.MAINTENANCEFOLDER, OFFLINE);
-                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
-                }
+                maintSrcFile = Path.Combine(RestoreTargetSite, UNZIPFOLDER, "wwwroot", Program.MAINTENANCEFOLDER, OFFLINE);
+                maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
                 File.Copy(maintSrcFile, maintTargetFile, true);
             }
         }
@@ -99,11 +87,7 @@ namespace Softelvdm.Tools.DeploySite {
         private void ClearMaintenanceMode() {
             if (Program.YamlData.Site.Maintenance) {
                 string maintTargetFile;
-                if (IsMVC6) {
-                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
-                } else {
-                    maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
-                }
+                maintTargetFile = Path.Combine(RestoreTargetSite, "App_Offline.htm");
                 File.Delete(maintTargetFile);
             }
         }
@@ -286,11 +270,7 @@ EXEC(@kill);";
 
                 string SQLBackupQuery = $"RESTORE DATABASE [{db.ProdDB}] FROM DISK = '{dbFileName}' WITH REPLACE ";
 
-                string dataFolder;
-                if (IsMVC6)
-                    dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
-                else
-                    dataFolder = Path.Combine(RestoreTargetSite, "..", DBDATAFOLDER);
+                string dataFolder = Path.Combine(RestoreTargetSite, DBDATAFOLDER);
 
                 Directory.CreateDirectory(dataFolder);
 
@@ -316,50 +296,26 @@ EXEC(@kill);";
             Console.WriteLine("Copying files...");
 
             // Add folders
-            if (IsMVC6) {
-                AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
-                AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
-                AddAllFilesToSite(Path.Combine("wwwroot", Program.MAINTENANCEFOLDER));
-                AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
-                //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
-                AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
-                AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
+            AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
+            AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
+            AddAllFilesToSite(Path.Combine("wwwroot", Program.MAINTENANCEFOLDER));
+            AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
+            //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
+            AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
+            AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
-                IOHelper.DeleteFolder(Path.Combine(RestoreTargetSite, "wwwroot", "Areas"));
-                AddAllFilesToSite("bower_components");
-                AddAllFilesToSite(Program.DATAFOLDER, ExcludeFiles: new List<string> { @".*\.mdf", @".*\.ldf" });
-                AddAllFilesToSite("Localization");
-                AddAllFilesToSite("LocalizationCustom");
-                AddAllFilesToSite("node_modules");
-                AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
-                AddAllFilesToSite("SiteTemplates");
+            IOHelper.DeleteFolder(Path.Combine(RestoreTargetSite, "wwwroot", "Areas"));
+            AddAllFilesToSite("bower_components");
+            AddAllFilesToSite(Program.DATAFOLDER, ExcludeFiles: new List<string> { @".*\.mdf", @".*\.ldf" });
+            AddAllFilesToSite("Localization");
+            AddAllFilesToSite("LocalizationCustom");
+            AddAllFilesToSite("node_modules");
+            AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
+            AddAllFilesToSite("SiteTemplates");
 
-                AddFilesToSiteDontRecurse(Path.Combine(RestoreTargetSite, UNZIPFOLDER), RestoreTargetSite, @"*.*");// dlls,exe, whatever is in the root folder
+            AddFilesToSiteDontRecurse(Path.Combine(RestoreTargetSite, UNZIPFOLDER), RestoreTargetSite, @"*.*");// dlls,exe, whatever is in the root folder
 
-                Directory.CreateDirectory(Path.Combine(RestoreTargetSite, "logs")); // make a log folder
-
-            } else {
-                AddAllFilesToSite("Addons");
-                AddAllFilesToSite("AddonsCustom");
-                IOHelper.DeleteFolder(Path.Combine(RestoreTargetSite, "Areas"));
-                AddAllFilesToSite("bower_components");
-                AddAllFilesToSite("bin");
-                AddAllFilesToSite(Program.DATAFOLDER, ExcludeFiles: new List<string> { @".*\.mdf", @".*\.ldf" });
-                AddAllFilesToSite(Program.MAINTENANCEFOLDER);
-                AddAllFilesToSite("Localization");
-                AddAllFilesToSite("LocalizationCustom");
-                AddAllFilesToSite("node_modules");
-                AddAllFilesToSite("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" });
-                AddAllFilesToSite("SiteFiles");
-                AddAllFilesToSite("SiteTemplates");
-                //AddAllFilesToSite("Vault");
-                AddFileToSite("logo.jpg", Optional: true);
-                AddFileToSite("Global.asax");
-                AddFileToSite("robots.txt");
-                AddFileToSite("Web.config");
-                AddAllFilesToSite("Content");// used to remove target folder - we don't distribute files in this folder
-                AddAllFilesToSite("Scripts");// used to remove target folder - we don't distribute files in this folder
-            }
+            Directory.CreateDirectory(Path.Combine(RestoreTargetSite, "logs")); // make a log folder
 
             string deployMarker = Path.Combine(RestoreTargetSite, "node_modules");//$$$DUBIOUS
             Directory.SetLastWriteTimeUtc(deployMarker, DateTime.UtcNow);

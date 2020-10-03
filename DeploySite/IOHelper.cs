@@ -29,21 +29,13 @@ namespace Softelvdm.Tools.DeploySite {
         }
 
         public static string FileToPhysical(string file) {
-#if MVC6
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 file = file.Replace('/', '\\');
-#else
-            file = file.Replace('/', '\\');
-#endif
             return file;
         }
         public static string PhysicalToFile(string file) {
-#if MVC6
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 file = file.Replace('\\', '/');
-#else
-            file = file.Replace('\\', '/');
-#endif
             return file;
         }
     }

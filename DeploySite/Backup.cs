@@ -19,8 +19,6 @@ namespace Softelvdm.Tools.DeploySite {
         private BackupZipFile BackupTargetZip;// type = zip
         private string BackupTempFolder;
 
-        private bool IsMVC6 { get; set; }
-
         private string BackupSiteLocation;
 
         public Backup() { }
@@ -38,12 +36,7 @@ namespace Softelvdm.Tools.DeploySite {
             if (!Directory.Exists(BackupSiteLocation))
                 throw new Error($"Website folder {BackupSiteLocation} not found");
 
-            if (Directory.Exists(Path.Combine(BackupSiteLocation, Program.MARKERMVC6)))
-                IsMVC6 = true;
-            if (IsMVC6)
-                Console.WriteLine("ASP.NET Core Site");
-            else
-                Console.WriteLine("ASP.NET 4 Site");
+            Console.WriteLine("ASP.NET Core Site");
 
             // clean temp folder
             string folder = Path.Combine(Program.YamlData.Deploy.BaseFolder, TEMPFOLDER);
@@ -160,76 +153,45 @@ namespace Softelvdm.Tools.DeploySite {
             AddFilesToTargetAndRecurse(Path.Combine(BackupTempFolder, Program.DBFOLDER), Program.DBFOLDER, Optional: true);
 
             // Add folders
-            if (IsMVC6) {
 
-                if (string.IsNullOrWhiteSpace(Program.YamlData.Deploy.From)) {
-                    throw new Error("The published output path created by Visual Studio Publish or dotnet publish must be defined using Deploy:From and is missing");
-                }
-
-                AddPublishOutput();
-                AddPublishOutputFiles("Microsoft.Data.SqlClient.SNI.pdb");// dumb, https://github.com/dotnet/SqlClient/issues/385
-                AddPublishOutputFiles("*.deps.json");
-                AddPublishOutputFiles("*.runtimeconfig.json");
-                AddPublishOutputFiles("*.dll.config");
-                AddPublishOutputFiles("*.exe.config");
-
-                AddAllFilesToTarget(Program.DATAFOLDER,
-                    ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"InitialInstall\.txt", @"UpgradeLogFile\.txt", @"StartupLogFile\.txt", @".*\.mdf", @".*\.ldf" },
-                    ExcludeFolders: new List<string>() { "Sites" });
-                AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "AppSettings.{0}json"), Path.Combine(Program.DATAFOLDER, "AppSettings.json"));
-                AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "NLog.{0}config"), Path.Combine(Program.DATAFOLDER, "NLog.config"), Optional: true);
-                if (Program.YamlData.Deploy.Localization) {
-                    AddAllFilesToTarget("Localization");
-                    AddAllFilesToTarget("LocalizationCustom", Optional: true);
-                }
-                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
-                AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
-                if (Program.YamlData.Deploy.SiteTemplates)
-                    AddAllFilesToTarget("SiteTemplates", Optional: true);
-                //AddAllFilesToPublishFolder("VaultPrivate");
-                AddConfigFileToTarget("app.{0}config", "app.config");
-                AddConfigFileToTarget("hosting.{0}json", "hosting.json", Optional: true);
-                AddConfigFileToTarget("Web.{0}config", "Web.config");
-
-                AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
-                AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
-                AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
-                //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));
-                AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
-                AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
-
-            } else {
-
-                AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
-                AddAllFilesToTarget("AddonsCustom", Optional: true);
-                if (Program.YamlData.Deploy.Debug)
-                    AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.xml" });
-                else
-                    AddAllFilesToTarget("bin", ExcludeFiles: new List<string> { @".*\.pdb", @".*\.xml" });
-                AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddFileToTarget(Path.Combine("node_modules", "Web.config"));
-                AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-                AddFileToTarget(Path.Combine("bower_components", "Web.config"));
-                AddAllFilesToTarget(Program.DATAFOLDER, ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"UpgradeLogFile\.txt", @".*\.mdf", @".*\.ldf" });
-                AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "AppSettings.{0}json"), Path.Combine(Program.DATAFOLDER, "AppSettings.json"));
-                AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "NLog.{0}config"), Path.Combine(Program.DATAFOLDER, "NLog.config"), Optional: true);
-                AddAllFilesToTarget(Program.MAINTENANCEFOLDER);
-                if (Program.YamlData.Deploy.Localization) {
-                    AddAllFilesToTarget("Localization");
-                    AddAllFilesToTarget("LocalizationCustom", Optional: true);
-                }
-                AddAllFilesToTarget("SiteFiles", Optional: true);
-                AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { @"TempFiles" });
-                if (Program.YamlData.Deploy.SiteTemplates)
-                    AddAllFilesToTarget("SiteTemplates", Optional: true);
-                AddFileToTarget("Global.asax");
-                AddFileToTarget("logo.jpg", Optional: true);
-                AddFileToTarget("robots.txt");
-                AddConfigFileToTarget("Web.{0}config", "Web.config");
-                //AddAllFilesToTarget("Vault");
+            if (string.IsNullOrWhiteSpace(Program.YamlData.Deploy.From)) {
+                throw new Error("The published output path created by Visual Studio Publish or dotnet publish must be defined using Deploy:From and is missing");
             }
+
+            AddPublishOutput();
+            AddPublishOutputFiles("Microsoft.Data.SqlClient.SNI.pdb");// dumb, https://github.com/dotnet/SqlClient/issues/385
+            AddPublishOutputFiles("*.deps.json");
+            AddPublishOutputFiles("*.runtimeconfig.json");
+            AddPublishOutputFiles("*.dll.config");
+            AddPublishOutputFiles("*.exe.config");
+
+            AddAllFilesToTarget(Program.DATAFOLDER,
+                ExcludeFiles: new List<string> { @"AppSettings\..*", @"NLog\..*", @"InitialInstall\.txt", @"UpgradeLogFile\.txt", @"StartupLogFile\.txt", @".*\.mdf", @".*\.ldf" },
+                ExcludeFolders: new List<string>() { "Sites" });
+            AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "AppSettings.{0}json"), Path.Combine(Program.DATAFOLDER, "AppSettings.json"));
+            AddConfigFileToTarget(Path.Combine(Program.DATAFOLDER, "NLog.{0}config"), Path.Combine(Program.DATAFOLDER, "NLog.config"), Optional: true);
+            if (Program.YamlData.Deploy.Localization) {
+                AddAllFilesToTarget("Localization");
+                AddAllFilesToTarget("LocalizationCustom", Optional: true);
+            }
+            AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
+            AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
+            AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
+            AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
+            if (Program.YamlData.Deploy.SiteTemplates)
+                AddAllFilesToTarget("SiteTemplates", Optional: true);
+            //AddAllFilesToPublishFolder("VaultPrivate");
+            AddConfigFileToTarget("app.{0}config", "app.config");
+            AddConfigFileToTarget("hosting.{0}json", "hosting.json", Optional: true);
+            AddConfigFileToTarget("Web.{0}config", "Web.config");
+
+            AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
+            AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
+            AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
+            AddAllFilesToTarget(Path.Combine("wwwroot", ".well-known"), Optional: true);
+            //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));
+            AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
+            AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
 
             if (BackupTargetZip != null) {
                 Console.WriteLine("Creating Zip file...");
@@ -420,13 +382,8 @@ namespace Softelvdm.Tools.DeploySite {
             // Find all filelist*.txt files and extract folders that are used
             List<string> sourceFolders = new List<string>();
             List<string> allLists = new List<string>();
-            if (IsMVC6) {
-                allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "Addons")));
-                allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "AddonsCustom")));
-            } else {
-                allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "Addons")));
-                allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "AddonsCustom")));
-            }
+            allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "Addons")));
+            allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "AddonsCustom")));
             allLists = allLists.Distinct().ToList().OrderBy((x) => x.Length).ToList();
 
             // eliminate subfolders if there are folders that contain them
@@ -492,13 +449,9 @@ namespace Softelvdm.Tools.DeploySite {
                 string path = line.Split(new char[] { ',' }).FirstOrDefault();
 
                 if (path.StartsWith("MVC6 ")) {
-                    if (!IsMVC6)
-                        continue;
                     path = path.Substring(4).Trim();
                 } else if (path.StartsWith("MVC5 ")) {
-                    if (IsMVC6)
-                        continue;
-                    path = path.Substring(4).Trim();
+                    continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(path)) {

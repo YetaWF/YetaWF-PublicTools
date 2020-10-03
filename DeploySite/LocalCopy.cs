@@ -1,10 +1,7 @@
 ﻿/* Copyright © 2020 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
-using FluentFTP;
 using System;
 using System.IO;
-using System.Net;
-using System.Text;
 
 namespace Softelvdm.Tools.DeploySite {
 
