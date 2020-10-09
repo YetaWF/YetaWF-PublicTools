@@ -191,6 +191,7 @@ namespace Softelvdm.Tools.DeploySite {
             AddAllFilesToTarget(Path.Combine("wwwroot", ".well-known"), Optional: true);
             //AddAllFilesToTarget(Path.Combine("wwwroot", "Vault"));
             AddFileToTarget(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
+            AddFileToTarget(Path.Combine("wwwroot", "favicon.ico"), Optional: true);
             AddFileToTarget(Path.Combine("wwwroot", "robots.txt"));
 
             if (BackupTargetZip != null) {

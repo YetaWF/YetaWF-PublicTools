@@ -303,6 +303,7 @@ EXEC(@kill);";
             AddAllFilesToSite(Path.Combine("wwwroot", ".well-known"));
             //AddAllFilesToSite(Path.Combine("wwwroot", "Vault"));
             AddFileToSite(Path.Combine("wwwroot", "logo.jpg"), Optional: true);
+            AddFileToSite(Path.Combine("wwwroot", "favicon.ico"), Optional: true);
             AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
             IOHelper.DeleteFolder(Path.Combine(RestoreTargetSite, "wwwroot", "Areas"));
