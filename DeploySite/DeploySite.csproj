@@ -13,14 +13,6 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <RootNamespace>Softelvdm.Tools.DeploySite</RootNamespace>
 
-    <!--- Awful fix for this error:
-    An assembly specified in the application dependencies manifest (Softelvdm.DeploySite.deps.json) was not found:
-    package: 'Microsoft.Data.SqlClient.SNI.runtime', version: '2.0.1'
-    path: 'runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.pdb'
-    (Let's hope someone fixes this abomination: https://github.com/dotnet/SqlClient/issues/385
-    -->
-    <IncludeSymbolsInSingleFile>true</IncludeSymbolsInSingleFile>
-
     <OutputType>Exe</OutputType>
 
     <AssemblyName>Softelvdm.DeploySite</AssemblyName>
