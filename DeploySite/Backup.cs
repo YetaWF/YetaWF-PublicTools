@@ -36,7 +36,7 @@ namespace Softelvdm.Tools.DeploySite {
             if (!Directory.Exists(BackupSiteLocation))
                 throw new Error($"Website folder {BackupSiteLocation} not found");
 
-            Console.WriteLine("ASP.NET Core Site");
+            Console.WriteLine(".NET Site");
 
             // clean temp folder
             string folder = Path.Combine(Program.YamlData.Deploy.BaseFolder, TEMPFOLDER);

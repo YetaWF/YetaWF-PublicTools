@@ -57,7 +57,7 @@ namespace Softelvdm.Tools.DeploySite {
 
             ExtractAllFiles();
 
-            Console.WriteLine("ASP.NET Core Site");
+            Console.WriteLine(".NET Site");
 
             SetMaintenanceMode();
 
