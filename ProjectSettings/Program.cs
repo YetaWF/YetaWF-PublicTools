@@ -13,7 +13,8 @@ namespace Softelvdm.Tools.ProjectSettings {
     /// <summary>
     /// This is a hacky little program that is typically used during installation of YetaWF to
     /// - create symlinks which are different between Windows and Linux et.al.
-    /// - handle selection of SQL or SQLDyn package. The selection in .csproj doesn't work with docker/dotnet build for nested referenced packages.
+    /// - remove legacy symlinks from projects to node_modules.
+    /// - handle selection of SQL or SQLDyn package. The selection in .csproj doesn't work with docker/dotnet build for nested referenced packages. (This should no longer be used)
     /// </summary>
     /// <remarks>The code could be prettier. This is a dev tool that ended up being needed for installation on linux. Oh well.</remarks>
     class Program {
@@ -21,6 +22,7 @@ namespace Softelvdm.Tools.ProjectSettings {
         public bool Junctions { get; private set; }
         public bool SQL { get; private set; }
         public bool SQLDyn { get; private set; }
+        public bool RemoveNodeModules { get; private set; }
 
         static int Main(string[] args) {
 
@@ -33,6 +35,8 @@ namespace Softelvdm.Tools.ProjectSettings {
                     string s = args[i];
                     if (string.Compare(s, "Symlinks", true) == 0) {
                         pgm.Junctions = true;
+                    } else if (string.Compare(s, "RemoveNodeModules", true) == 0) {
+                        pgm.RemoveNodeModules = true;
                     } else if (string.Compare(s, "SQL", true) == 0) {
                         pgm.SQL = true;
                     } else if (string.Compare(s, "SQLDyn", true) == 0) {
@@ -45,7 +49,7 @@ namespace Softelvdm.Tools.ProjectSettings {
             }
 
             // Validate conflicting parms
-            if ((!pgm.Junctions && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
+            if ((!pgm.Junctions && !pgm.RemoveNodeModules && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
                 Messages.Message("Usage: YetaWF.ProjectSettings.exe {Symlinks|SQL|SQLDyn} ");
                 return -1;
             }
@@ -58,6 +62,10 @@ namespace Softelvdm.Tools.ProjectSettings {
                 return -1;
             }
 
+            if (pgm.RemoveNodeModules) {
+                pgm.ProjectsFolderWebsiteLinksRemove(Path.Combine(solFolder, "Modules"), solFolder);
+                pgm.ProjectsFolderWebsiteLinksRemove(Path.Combine(solFolder, "Skins"), solFolder);
+            }
             if (pgm.Junctions) {
                 pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "Areas"));
                 pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "wwwroot", "Addons"));
@@ -75,7 +83,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 MakeSymLink(Path.Combine(solFolder, "Website", "wwwroot", "Addons", "YetaWF.DataProvider", "SQLGeneric"), Path.Combine(solFolder, "DataProvider", "SQLGeneric", "Addons"));
 
                 MakeSymLink(Path.Combine(solFolder, "Website", "Localization"), Path.Combine(solFolder, "Localization"));
-                MakeSymLink(Path.Combine(solFolder, "CoreComponents", "Core", "node_modules"), Path.Combine(solFolder, "Website", "node_modules"));
+                //MakeSymLink(Path.Combine(solFolder, "CoreComponents", "Core", "node_modules"), Path.Combine(solFolder, "Website", "node_modules"));
             }
             if (pgm.SQL || pgm.SQLDyn) {
                 Messages.Message("Website projects...");
@@ -134,6 +142,21 @@ namespace Softelvdm.Tools.ProjectSettings {
                 --retry;
             }
         }
+        private void ProjectsFolderWebsiteLinksRemove(string folder, string solFolder) {
+            List<string> companies = Directory.GetDirectories(folder).ToList();
+            foreach (string company in companies) {
+                List<string> projects = Directory.GetDirectories(company).ToList();
+                foreach (string project in projects) {
+                    // remove symlink from the project to Website/node_modules
+                    string srcFolder = Path.Combine(project, "node_modules");
+                    DeleteFolder(srcFolder);
+                    string srcFile = Path.Combine(project, "tsconfig.json");
+                    File.Delete(srcFile);
+                    Messages.Message($"Symlink {srcFolder} removed");
+                }
+            }
+        }
+
         private void ProjectsFolderWebsiteLinks(string folder, string solFolder) {
             List<string> companies = Directory.GetDirectories(folder).ToList();
             foreach (string company in companies) {
@@ -144,10 +167,10 @@ namespace Softelvdm.Tools.ProjectSettings {
                     //List<string> projectsWithNodeNames = new List<string> { "Basics" };
                     //string projName = Path.GetFileName(project);
                     //if (projectsWithNodeNames.Contains(projName)) {
-                    string srcFolder = Path.Combine(project, "node_modules");
-                    string targetFolder = Path.Combine(solFolder, "Website", "node_modules");
-                    MakeSymLink(srcFolder, targetFolder);
-                    Messages.Message($"Symlink from {srcFolder} to {targetFolder}");
+                        //string srcFolder = Path.Combine(project, "node_modules");
+                        //string targetFolder = Path.Combine(solFolder, "Website", "node_modules");
+                        //MakeSymLink(srcFolder, targetFolder);
+                        //Messages.Message($"Symlink from {srcFolder} to {targetFolder}");
                     //}
                     OneProjectFolderWebsiteLinks(folder, solFolder, Path.GetFileName(company), project);
                 }

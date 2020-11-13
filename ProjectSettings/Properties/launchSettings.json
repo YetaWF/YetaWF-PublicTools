@@ -2,7 +2,7 @@
   "profiles": {
     "ProjectSettings": {
       "commandName": "Project",
-      "commandLineArgs": "SymLinks",
+      "commandLineArgs": "RemoveNodeModules",
       "workingDirectory": "C:\\Development\\YetaWF2\\Website"
     }
   }
