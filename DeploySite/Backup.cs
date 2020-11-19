@@ -1,11 +1,11 @@
 ﻿/* Copyright © 2020 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Data.SqlClient;
 
 namespace Softelvdm.Tools.DeploySite {
 
