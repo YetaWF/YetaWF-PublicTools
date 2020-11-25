@@ -35,9 +35,8 @@ namespace Softelvdm.Tools.DeploySite {
             if (Directory.Exists(from)) {
                 Console.WriteLine($"Uploading folder {from}");
                 string[] files = Directory.GetFiles(from);
-                string folder = Path.GetFileName(from);
                 foreach (string file in files) {
-                    Upload(ftpClient, file, $"{to}/{folder}/{Path.GetFileName(file)}");
+                    Upload(ftpClient, file, Path.Combine(to, Path.GetFileName(file)));
                 }
             } else if (File.Exists(from)) {
                 Console.WriteLine($"Uploading file {from}");
