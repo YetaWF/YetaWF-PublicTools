@@ -1,4 +1,4 @@
-﻿/* Copyright © 2020 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
+﻿/* Copyright © 2021 Softel vdm, Inc. - https://yetawf.com/Documentation/YetaWF/Licensing */
 
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Data.SqlClient;
@@ -213,7 +213,7 @@ namespace Softelvdm.Tools.DeploySite {
                 string sqlKill = $@"
 USE [master];
 
-DECLARE @kill varchar(8000) = '';  
+DECLARE @kill varchar(8000) = '';
 SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), session_id) + ';'
 FROM sys.dm_exec_sessions
 WHERE database_id  = db_id('{db.ProdDB}')
