@@ -476,7 +476,7 @@ namespace Softelvdm.Tools.DeploySite {
                                 throw new Error($"File {file} contains reference to {path} which isn't .js or .css");
                             path = Path.GetDirectoryName(path);
                             path = IOHelper.PhysicalToFile(path);
-                            path = path.Replace("/{0}", ""); // for some composite paths like kendoui themes
+                            path = path.Replace("/{0}", ""); // for some composite paths that require arguments
                             string realPath = BackupSiteLocation + IOHelper.FileToPhysical(path);
                             if (!Directory.Exists(realPath))
                                 throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
@@ -486,7 +486,7 @@ namespace Softelvdm.Tools.DeploySite {
                         }
                         if (path.StartsWith("Folder ")) {
                             path = path.Substring(6).Trim();
-                            path = path.Replace("/{0}", ""); // for some composite paths like kendoui themes
+                            path = path.Replace("/{0}", ""); // for some composite paths that require arguments
                             string realPath = BackupSiteLocation + IOHelper.FileToPhysical(path);
                             if (!Directory.Exists(realPath))
                                 throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
