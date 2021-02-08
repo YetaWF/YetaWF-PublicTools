@@ -307,7 +307,6 @@ EXEC(@kill);";
             AddFileToSite(Path.Combine("wwwroot", "robots.txt"));
 
             IOHelper.DeleteFolder(Path.Combine(RestoreTargetSite, "wwwroot", "Areas"));
-            AddAllFilesToSite("bower_components");
             AddAllFilesToSite(Program.DATAFOLDER, ExcludeFiles: new List<string> { @".*\.mdf", @".*\.ldf" });
             AddAllFilesToSite("Localization");
             AddAllFilesToSite("LocalizationCustom");

@@ -138,7 +138,7 @@ namespace Softelvdm.Tools.DeploySite {
 
         List<string> FileListExcludedFiles = new List<string> {
             @".*\.html", @".*\.swf", @".*\.fla",
-            @"\.npm.*", @"authors\.txt", @"bower\.json", @"Changes\.md", @"Changelog\.md", @"License.*\.md", @"License.*\.txt", @"package\.json", @"Readme.*\.md",
+            @"\.npm.*", @"authors\.txt", @"Changes\.md", @"Changelog\.md", @"License.*\.md", @"License.*\.txt", @"package\.json", @"Readme.*\.md",
             @"Gruntfile\.coffee",
         };
         List<string> FileListExcludedFolders = new List<string> {
@@ -176,7 +176,6 @@ namespace Softelvdm.Tools.DeploySite {
             }
             AddAddonsFolders(Path.Combine("wwwroot", "Addons"));
             AddFilesToTargetFromFileList("node_modules", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
-            AddFilesToTargetFromFileList("bower_components", ExcludeFiles: FileListExcludedFiles, ExcludeFolders: FileListExcludedFolders);
             AddAllFilesToTarget("Sites", ExcludeFiles: new List<string> { @"Backup .*\.zip" }, ExcludeFolders: new List<string> { "TempFiles" });
             if (Program.YamlData.Deploy.SiteTemplates)
                 AddAllFilesToTarget("SiteTemplates", Optional: true);
@@ -462,8 +461,8 @@ namespace Softelvdm.Tools.DeploySite {
                         throw new Error($"File {file} contains a \\ (backslash)");
 
                     if (contentsFile == "filelistdeploy") {
-                        if (!path.StartsWith("/node_modules/") && !path.StartsWith("bower_components"))
-                            throw new Error($"Only files/folders in node_modules or bower_components folders can be deployed");
+                        if (!path.StartsWith("/node_modules/"))
+                            throw new Error($"Only files/folders in node_modules folders can be deployed");
                         string realPath = BackupSiteLocation + IOHelper.FileToPhysical(path);
                         if (!Directory.Exists(realPath))
                             throw new Error($"File {file} contains reference to folder {realPath} that does not exist");
@@ -471,7 +470,7 @@ namespace Softelvdm.Tools.DeploySite {
                         paths.Add(IOHelper.FileToPhysical(path));
                         continue;
                     } else {
-                        if (path.StartsWith("/node_modules/") || path.StartsWith("bower_components")) {
+                        if (path.StartsWith("/node_modules/")) {
                             if (!path.EndsWith(".js") && !path.EndsWith(".css"))
                                 throw new Error($"File {file} contains reference to {path} which isn't .js or .css");
                             path = Path.GetDirectoryName(path);
@@ -494,8 +493,8 @@ namespace Softelvdm.Tools.DeploySite {
                             paths.Add(IOHelper.FileToPhysical(path));
                             continue;
                         }
-                        if (path.Contains("node_modules") || path.Contains("bower_components"))
-                            throw new Error($"File {file} contains reference to node_modules which should start with \"\\node_modules\" or \"\\bower_components\"");
+                        if (path.Contains("node_modules"))
+                            throw new Error($"File {file} contains reference to node_modules which should start with \"\\node_modules\"");
                     }
                 }
             }
