@@ -50,7 +50,7 @@ namespace Softelvdm.Tools.ProjectSettings {
 
             // Validate conflicting parms
             if ((!pgm.Junctions && !pgm.RemoveNodeModules && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
-                Messages.Message("Usage: YetaWF.ProjectSettings.exe {Symlinks|SQL|SQLDyn} ");
+                Messages.Message("Usage: YetaWF.ProjectSettings.exe {Symlinks|SQL|SQLDyn|RemoveNodeModules} ");
                 return -1;
             }
 
