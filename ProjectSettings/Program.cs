@@ -2,13 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace Softelvdm.Tools.ProjectSettings {
+namespace Softelvdm.Tools.ProjectSettings
+{
 
     /// <summary>
     /// This is a hacky little program that is typically used during installation of YetaWF to
@@ -19,7 +18,7 @@ namespace Softelvdm.Tools.ProjectSettings {
     /// <remarks>The code could be prettier. This is a dev tool that ended up being needed for installation on linux. Oh well.</remarks>
     class Program {
 
-        public bool Junctions { get; private set; }
+        public bool Symlinks { get; private set; }
         public bool SQL { get; private set; }
         public bool SQLDyn { get; private set; }
         public bool RemoveNodeModules { get; private set; }
@@ -34,7 +33,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 for (int i = 0; i < argCount; ++i) {
                     string s = args[i];
                     if (string.Compare(s, "Symlinks", true) == 0) {
-                        pgm.Junctions = true;
+                        pgm.Symlinks = true;
                     } else if (string.Compare(s, "RemoveNodeModules", true) == 0) {
                         pgm.RemoveNodeModules = true;
                     } else if (string.Compare(s, "SQL", true) == 0) {
@@ -49,7 +48,7 @@ namespace Softelvdm.Tools.ProjectSettings {
             }
 
             // Validate conflicting parms
-            if ((!pgm.Junctions && !pgm.RemoveNodeModules && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
+            if ((!pgm.Symlinks && !pgm.RemoveNodeModules && !pgm.SQL && !pgm.SQLDyn) || (pgm.SQL && pgm.SQLDyn)) {
                 Messages.Message("Usage: YetaWF.ProjectSettings.exe {Symlinks|SQL|SQLDyn|RemoveNodeModules} ");
                 return -1;
             }
@@ -66,7 +65,7 @@ namespace Softelvdm.Tools.ProjectSettings {
                 pgm.ProjectsFolderWebsiteLinksRemove(Path.Combine(solFolder, "Modules"), solFolder);
                 pgm.ProjectsFolderWebsiteLinksRemove(Path.Combine(solFolder, "Skins"), solFolder);
             }
-            if (pgm.Junctions) {
+            if (pgm.Symlinks) {
                 pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "Areas"));
                 pgm.DeleteAllDirectories(Path.Combine(solFolder, "Website", "wwwroot", "Addons"));
                 pgm.ProjectsFolderWebsiteLinks(Path.Combine(solFolder, "Modules"), solFolder);
@@ -200,42 +199,7 @@ namespace Softelvdm.Tools.ProjectSettings {
             }
             if (!Directory.Exists(targetFolder))
                 return;
-            //Console.WriteLine(string.Format("Linking {0} to {1}", srcFolder, targetFolder));
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                Junction.Create(srcFolder, targetFolder, true);
-            } else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
-                // There is no API in .NET Core to do this. Tsk, tsk.
-                RunCommand("ln", $"-f -s \"{targetFolder}\" \"{srcFolder}\"");
-                if (!Directory.Exists(srcFolder))
-                    throw new ApplicationException($"Unable to create symlink from {srcFolder} to {targetFolder}");
-            } else {
-                throw new ApplicationException($"Unsupported operating system (currently only Windows and Linux are supported)");
-            }
-        }
-        private static void RunCommand(string cmd, string args) {
-
-            Process p = new Process();
-
-            Console.WriteLine($"Executing {cmd} {args}");
-
-            p.StartInfo.FileName = cmd;
-            p.StartInfo.Arguments = args;
-
-            p.StartInfo.CreateNoWindow = true;
-            p.EnableRaisingEvents = true;
-
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.UseShellExecute = false;
-
-            if (p.Start()) {
-                string result = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-            } else {
-                throw new ApplicationException($"Failed to start {cmd}");
-            }
-
-            if (p.ExitCode != 0)
-                throw new ApplicationException($"{cmd} {args} failed - {p.ExitCode}");
+            Directory.CreateSymbolicLink(srcFolder, targetFolder);
         }
 
         private List<string> ProjectPatterns = new List<string> { "*.csproj" };

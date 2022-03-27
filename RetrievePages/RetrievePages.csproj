@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>5.4.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DefineConstants>$(DefineConstants);MVC6;NETCOREAPP</DefineConstants>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
@@ -14,7 +14,7 @@
     <RootNamespace>Softelvdm.Tools.RetrievePages</RootNamespace>
 
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Softelvdm.RetrievePages</AssemblyName>
   </PropertyGroup>
 
