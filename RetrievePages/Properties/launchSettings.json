@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RetrievePages": {
+      "commandName": "Project",
+      "commandLineArgs": "<\"C:\\Development\\YetaWF2\\Preload Urls DEBUG.txt\""
+    }
+  }
+}
