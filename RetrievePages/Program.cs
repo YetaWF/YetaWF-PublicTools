@@ -11,13 +11,12 @@ namespace RetrievePages
 
         public static string UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
 
-        private static HttpClientHandler Handler = new HttpClientHandler {
+        private static readonly HttpClientHandler Handler = new HttpClientHandler {
             AllowAutoRedirect = true,
             UseCookies = true,
         };
-        private static HttpClient Client = new HttpClient(Handler, true) { 
+        private static readonly HttpClient Client = new HttpClient(Handler, true) { 
              Timeout = new TimeSpan(0, 1, 0),
-             
         };
 
         static async Task Main(string[] args) {
