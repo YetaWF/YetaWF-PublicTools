@@ -12,9 +12,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <RootNamespace>Softelvdm.Tools.RetrievePages</RootNamespace>
-
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Softelvdm.RetrievePages</AssemblyName>
   </PropertyGroup>
 
