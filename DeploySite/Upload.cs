@@ -17,7 +17,7 @@ namespace Softelvdm.Tools.DeploySite {
                     Console.WriteLine($"Uploading to {ftp.Server} ...");
 
                     NetworkCredential creds = new NetworkCredential(ftp.User, ftp.Password);
-                    using (FtpClient ftpClient = new FtpClient(ftp.Server, ftp.Port, creds)) {
+                    using (FtpClient ftpClient = new FtpClient(ftp.Server, creds, ftp.Port)) {
                         FtpProfile ftpProf = ftpClient.AutoConnect();
                         if (ftpProf == null)
                             throw new Error($"Can't connect to FTP server {ftp.Server}");
@@ -44,7 +44,7 @@ namespace Softelvdm.Tools.DeploySite {
                     string content = File.ReadAllText(from);
                     content = Program.ReplaceBlueGreen(content);
                     byte[] btes = Encoding.ASCII.GetBytes(content);
-                    ftpClient.Upload(btes, to, createRemoteDir: true);
+                    ftpClient.UploadBytes(btes, to, createRemoteDir: true);
                 } else {
                     if (Conditional) {
                         if (ftpClient.FileExists(to)) {
