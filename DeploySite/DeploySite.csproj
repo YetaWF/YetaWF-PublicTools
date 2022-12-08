@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="40.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
