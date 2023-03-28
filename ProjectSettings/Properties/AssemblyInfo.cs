@@ -3,8 +3,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Project settings tool to switch between MVC5/MVC6")]
-[assembly: AssemblyDescription("Switch between MVC5/MVC6")]
+[assembly: AssemblyTitle("Project settings tool to build symlinks")]
+[assembly: AssemblyDescription("Build symlinks")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Softel vdm, Inc.")]
 [assembly: AssemblyProduct("ProjectSettings")]
