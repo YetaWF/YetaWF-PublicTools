@@ -297,7 +297,7 @@ EXEC(@kill);";
 
             // Add folders
             AddAllFilesToSite(Path.Combine("wwwroot", "Addons"));
-            AddAllFilesToSite(Path.Combine("wwwroot", "AddonsCustom"));
+            AddAllFilesToSite(Path.Combine("wwwroot", "Addons", "Custom"));
             AddAllFilesToSite(Path.Combine("wwwroot", Program.MAINTENANCEFOLDER));
             AddAllFilesToSite(Path.Combine("wwwroot", "SiteFiles"));
             AddAllFilesToSite(Path.Combine("wwwroot", ".well-known"));

@@ -184,7 +184,7 @@ namespace Softelvdm.Tools.DeploySite {
             AddConfigFileToTarget("hosting.{0}json", "hosting.json", Optional: true);
             AddConfigFileToTarget("Web.{0}config", "Web.config");
 
-            AddAllFilesToTarget(Path.Combine("wwwroot", "AddonsCustom"), Optional: true);
+            AddAllFilesToTarget(Path.Combine("wwwroot", "Addons", "Custom"), Optional: true);
             AddAllFilesToTarget(Path.Combine("wwwroot", "Maintenance"));
             AddAllFilesToTarget(Path.Combine("wwwroot", "SiteFiles"), Optional: true);
             AddAllFilesToTarget(Path.Combine("wwwroot", ".well-known"), Optional: true);
@@ -383,7 +383,7 @@ namespace Softelvdm.Tools.DeploySite {
             List<string> sourceFolders = new List<string>();
             List<string> allLists = new List<string>();
             allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "Addons")));
-            allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "AddonsCustom")));
+            allLists.AddRange(FindAllFileLists(Path.Combine(BackupSiteLocation, "wwwroot", "Addons", "Custom")));
             allLists = allLists.Distinct().ToList().OrderBy((x) => x.Length).ToList();
 
             // eliminate subfolders if there are folders that contain them
