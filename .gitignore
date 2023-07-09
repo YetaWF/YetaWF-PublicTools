@@ -3,3 +3,4 @@ StatusCheck/
 
 bin/
 obj/
+*.user
