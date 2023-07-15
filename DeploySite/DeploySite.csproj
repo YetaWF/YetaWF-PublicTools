@@ -33,13 +33,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="46.0.2" />
+    <PackageReference Include="FluentFTP" Version="47.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-    <PackageReference Include="YamlDotNet" Version="13.1.0" />
+    <PackageReference Include="YamlDotNet" Version="13.1.1" />
   </ItemGroup>
 
 </Project>
