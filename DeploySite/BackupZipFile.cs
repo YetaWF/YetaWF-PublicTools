@@ -59,6 +59,7 @@ namespace Softelvdm.Tools.DeploySite {
         public void Save(Stream stream) {
             // add all files
             using (ZipOutputStream zipStream = new ZipOutputStream(stream)) {
+                zipStream.IsStreamOwner = false;
                 zipStream.SetLevel(5);
                 foreach (BackupZipEntry entry in this.Entries) {
                     if (entry.Data != null)
