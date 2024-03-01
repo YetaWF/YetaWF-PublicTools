@@ -204,7 +204,7 @@ namespace Softelvdm.Tools.DeploySite {
 
             Console.WriteLine($"Closing existing connections to {db.ProdDB}");
 
-            string connectionString = String.Format("Data Source={0};User ID={1};Password={2};", db.ProdServer, db.ProdUsername, db.ProdPassword);
+            string connectionString = String.Format("Data Source={0};User ID={1};Password={2};TrustServerCertificate=True;", db.ProdServer, db.ProdUsername, db.ProdPassword);
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString)) {
 
@@ -236,7 +236,7 @@ EXEC(@kill);";
             string dbFileName = Path.Combine(RestoreTargetSite, UNZIPFOLDER, Program.DBFOLDER, bakFile);
 
             // Connection
-            string connectionString = String.Format("Data Source={0};User ID={1};Password={2};", db.ProdServer, db.ProdUsername, db.ProdPassword);
+            string connectionString = String.Format("Data Source={0};User ID={1};Password={2};TrustServerCertificate=True;", db.ProdServer, db.ProdUsername, db.ProdPassword);
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString)) {
 

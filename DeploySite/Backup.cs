@@ -123,7 +123,7 @@ namespace Softelvdm.Tools.DeploySite {
             Directory.CreateDirectory(path);
 
             // Connection
-            string connectionString = String.Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3};", db.DevServer, db.DevDB, db.DevUsername, db.DevPassword);
+            string connectionString = String.Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3};TrustServerCertificate=True;", db.DevServer, db.DevDB, db.DevUsername, db.DevPassword);
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString)) {
 
